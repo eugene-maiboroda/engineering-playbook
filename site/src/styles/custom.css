@@ -1,0 +1,48 @@
+@media (min-width: 72rem) {
+    :root {
+        --sl-content-width: 80rem;
+    }
+
+    .right-sidebar {
+        width: 16rem;
+    }
+
+    .main-frame {
+        width: 100%;
+        max-width: none;
+    }
+}
+
+.sl-markdown-content {
+    font-size: 0.92rem;
+    line-height: 1.4;
+}
+    /* Заголовки */
+    .sl-markdown-content h1 {
+        font-size: 1.8rem;
+    }
+
+    .sl-markdown-content h2 {
+        font-size: 1.6rem;
+    }
+
+    .sl-markdown-content h3 {
+        font-size: 1.3rem;
+    }
+
+    .sl-markdown-content h4 {
+        font-size: 1.1rem;
+    }
+
+    /* Відступи */
+    .sl-markdown-content > * + * {
+        margin-top: 0.7rem;
+    }
+
+    .sl-markdown-content h2 {
+        margin-top: 1.5rem;
+    }
+
+    .sl-markdown-content h3 {
+        margin-top: 1.2rem;
+    }

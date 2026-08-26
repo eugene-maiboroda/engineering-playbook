@@ -1,3 +1,7 @@
+---
+title: Hexagonal Pipeline
+---
+
 # Спрощена гексагональна архітектура — Pipeline
 
 Еталон: `si-article-pipeline-refactored` (NYPost article/video collector).

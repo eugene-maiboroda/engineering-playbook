@@ -1,3 +1,7 @@
+---
+title: Modular Monolith integrations, dto, cache
+---
+
 # Модульний моноліт --- API boundaries, DTO, зовнішні інтеграції та cache
 
 Цей розділ доповнює основну нотатку про модульний моноліт і деталізує

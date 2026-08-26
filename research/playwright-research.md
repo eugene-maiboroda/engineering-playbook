@@ -1,3 +1,8 @@
+---
+title: Playwright Research
+description: Research of Playwright concurrency and Java synchronous bindings
+---
+
 # Playwright: Java synchronous binding, concurrency та SERP fetching
 
 ## 1. Задача дослідження

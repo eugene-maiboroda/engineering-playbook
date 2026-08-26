@@ -1,1 +1,3 @@
-
+---
+title: Architecture Discovery Checklist
+---
