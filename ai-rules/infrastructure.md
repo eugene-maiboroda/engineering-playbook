@@ -1009,6 +1009,25 @@ Spring Boot
 
 ---
 
+# Testing Policy for Infrastructure and CI
+
+За замовчуванням нові тести не пишуться. Infrastructure та CI pipeline
+не є підставою автоматично додавати тести: діє
+[Testing Policy](general.md#testing-policy).
+
+Тільки за явним запитом користувача додається мінімальний набір тестів
+найкритичнішої бізнес-логіки. Загальна кількість автоматизованих тестових
+сценаріїв у проєкті, включно з наявними, не повинна перевищувати 20.
+Тести infrastructure, Docker configuration, framework wiring та
+`contextLoads` автоматично не додаються.
+
+`-DskipTests` у Dockerfile означає лише пропуск запуску наявних тестів
+під час збірки image. Це не окрема вимога створювати або видаляти тести.
+Configuration та pipeline перевіряються через рев'ю, доречні build/static
+checks і перевірку запуску; після змін чи рефакторингу перевірки повторюються.
+
+---
+
 # AI Implementation Rules
 
 Під час створення або зміни infrastructure AI повинен:

@@ -1358,31 +1358,19 @@ Recipe Service
 
 # Тестування
 
-Основна бізнес-логіка тестується на рівні конкретного модуля.
+За замовчуванням нові тести не пишуться. Застосовується
+[Testing Policy](../ai-rules/general.md#testing-policy): тільки за явним
+запитом користувача, тільки для найкритичнішої бізнес-логіки та не більше
+20 автоматизованих тестових сценаріїв загалом на проєкт, включно з наявними.
 
-```text
-shopping/
-    ShoppingServiceTest
-    ShoppingListExportServiceTest
-```
+Якщо тести погоджені, критичні бізнес-правила перевіряються на рівні
+відповідного модуля без підняття всього Spring context.
+Критичний міжмодульний бізнес-сценарій перевіряється через public API
+модуля, а не через internal classes.
 
-Не потрібно піднімати весь Spring context для кожного тесту.
-
-Repository / integration boundaries тестуються integration tests там, де
-це дає користь.
-
-Cross-module contracts варто тестувати через public API модуля, а не
-через internal classes.
-
-Архітектурні тести (наприклад ArchUnit) можна додати, коли модулів стає
-достатньо багато і є ризик випадкових dependency violations:
-
-```text
-shopping may access recipe.api
-shopping must not access recipe.persistence
-```
-
-На маленькому проєкті це не обов'язково.
+Тести repository, технічних integrations, framework wiring та ArchUnit
+автоматично не додаються. Межі модулів і залежності перевіряються під час
+рев'ю та доречними наявними засобами; після рефакторингу перевірка повторюється.
 
 ---
 
