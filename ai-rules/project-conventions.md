@@ -522,4 +522,105 @@ Project Conventions відповідають на питання:
 
 Обидва рівні доповнюють один одного і не суперечать один одному.
 
+---
 
+# 18. Named Static Factory Methods for Records
+
+## Rule
+
+Якщо `record` представляє декілька семантично різних результатів або
+валідних станів, для його створення використовуються іменовані статичні
+фабричні методи.
+
+Назва фабрики повинна описувати стан або намір створення, наприклад:
+
+- `accepted(messageId)`;
+- `rejected(error)`;
+- `unknown(error)`;
+- `success(value)`;
+- `failure(error)`.
+
+Код, який використовує такий `record`, повинен викликати готову фабрику,
+а не вручну повторювати комбінацію enum-значень, `null` та інших
+службових аргументів у canonical constructor.
+
+Compact constructor залишається єдиним місцем перевірки інваріантів,
+щоб некоректний стан не можна було створити ані через фабрику, ані через
+прямий виклик canonical constructor.
+
+Це правило застосовується, коли фабрика:
+
+- робить намір виклику очевидним;
+- представляє дозволений стан об'єкта;
+- приховує технічні аргументи або допустимі `null`-комбінації;
+- не дублює бізнес-логіку, що належить іншому компоненту.
+
+Для простого `record`, у якого є лише один очевидний спосіб створення і
+всі аргументи однаково потрібні, додавати фабрику без практичної користі
+не потрібно.
+
+## Example
+
+```java
+import java.util.Objects;
+
+public record SendMessageResult(
+        SendOutcome outcome,
+        String messageId,
+        SendError error
+) {
+
+    public SendMessageResult {
+        Objects.requireNonNull(outcome, "outcome must not be null");
+
+        if (outcome == SendOutcome.ACCEPTED && error != null) {
+            throw new IllegalArgumentException(
+                    "Accepted send result must not contain an error"
+            );
+        }
+
+        if (outcome != SendOutcome.ACCEPTED && error == null) {
+            throw new IllegalArgumentException(
+                    "Rejected or unknown send result must contain an error"
+            );
+        }
+    }
+
+    public static SendMessageResult accepted(String messageId) {
+        return new SendMessageResult(SendOutcome.ACCEPTED, messageId, null);
+    }
+
+    public static SendMessageResult rejected(SendError error) {
+        return new SendMessageResult(SendOutcome.REJECTED, null, error);
+    }
+
+    public static SendMessageResult unknown(SendError error) {
+        return new SendMessageResult(SendOutcome.UNKNOWN, null, error);
+    }
+}
+```
+
+Використання:
+
+```java
+return SendMessageResult.accepted(messageId);
+return SendMessageResult.rejected(error);
+```
+
+Уникати:
+
+```java
+return new SendMessageResult(SendOutcome.ACCEPTED, messageId, null);
+return new SendMessageResult(SendOutcome.REJECTED, null, error);
+```
+
+## Why
+
+Іменовані статичні фабрики:
+
+- роблять виклик самодокументованим;
+- централізують правильні комбінації полів;
+- зменшують ризик переплутати аргументи або створити невалідний стан;
+- спрощують зміну внутрішньої структури `record`;
+- забезпечують однаковий стиль створення result/value objects у всьому
+  проєкті.

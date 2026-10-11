@@ -7,11 +7,12 @@
 Перед створенням проєкту AI повинен:
 
 1. Прочитати `Engineering Playbook`:
-    - `ai-rules`;
-    - доступні `architectures`;
-    - `project-conventions`;
-    - `infrastructure`;
-    - релевантні `principles`, `decisions` та інші матеріали.
+   
+   - `ai-rules`;
+   - доступні `architectures`;
+   - `project-conventions`;
+   - `infrastructure`;
+   - релевантні `principles`, `decisions` та інші матеріали.
 
 2. Прочитати всю надану папку з інформацією про конкретний проєкт.
 
@@ -225,7 +226,6 @@ Implementation
 ### Core Rule
 
 > **Спочатку зрозуміти та обговорити проєкт. Потім користувач створює початковий проєкт. Після цього AI перевіряє фактичний стан проєкту. І лише після явного дозволу користувача починаються Planning, створення foundation та подальша реалізація.**
-
 
 # General AI Engineering Rules
 
