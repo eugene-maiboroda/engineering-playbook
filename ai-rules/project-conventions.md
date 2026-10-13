@@ -633,3 +633,18 @@ return new SendMessageResult(SendOutcome.REJECTED, null, error);
 - спрощують зміну внутрішньої структури `record`;
 - забезпечують однаковий стиль створення result/value objects у всьому
   проєкті.
+
+
+---
+
+# 19. Consistent Error Handling
+
+## Rule
+
+REST API та Security handlers використовують єдиний формат помилки зі
+стабільним `code` і безпечним повідомленням. HTTP-мапінг залишається на
+web-межі; бізнес-винятки належать своїм модулям і не залежать від HTTP.
+Неочікувані збої логуються, внутрішні деталі не передаються клієнту.
+
+Структура, правила та reference implementation:
+[Error Handling](error-handling.md).

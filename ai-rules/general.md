@@ -12,6 +12,7 @@
    - доступні `architectures`;
    - `project-conventions`;
    - `infrastructure`;
+   - `error-handling`, якщо проєкт має HTTP API;
    - релевантні `principles`, `decisions` та інші матеріали.
 
 2. Прочитати всю надану папку з інформацією про конкретний проєкт.
