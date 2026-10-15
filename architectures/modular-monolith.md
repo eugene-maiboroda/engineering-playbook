@@ -1189,12 +1189,18 @@ ApplicationProperties
 
 ```java
 @ConfigurationProperties(prefix = "ai")
-public record AiProps(...) {}
+public record AiProps(
+
+        ...
+) {}
 ```
 
 ```java
 @ConfigurationProperties(prefix = "storage")
-public record StorageProps(...) {}
+public record StorageProps(
+
+        ...
+) {}
 ```
 
 і:

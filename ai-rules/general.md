@@ -12,7 +12,9 @@
    - доступні `architectures`;
    - `project-conventions`;
    - `infrastructure`;
+   - `environments`, якщо задача стосується prod/dev або Docker deployment;
    - `error-handling`, якщо проєкт має HTTP API;
+   - `web-api`, якщо проєкт має HTTP API;
    - релевантні `principles`, `decisions` та інші матеріали.
 
 2. Прочитати всю надану папку з інформацією про конкретний проєкт.
@@ -253,6 +255,11 @@ AI повинен працювати як senior розробник: писат�
 - У production Java-коді не використовуй `var`: вказуй типи явно.
   `var` дозволений лише в тестах.
 
+- У всіх проєктах застосовуй погоджений
+  [Java Code Style](project-conventions.md#agreed-java-code-style)
+  до нового коду та змінюваних фрагментів. Старі сторонні класи
+  масово не форматуй без доручення.
+
 ---
 
 ## Testing Policy
@@ -454,16 +461,23 @@ hardcoded у коді.
 
 ```text
 docker/
-├── docker-compose.yml
-├── .env
-└── .env.example
+├── prod/
+│   ├── docker-compose.yml
+│   ├── .env
+│   └── .env.example
+└── dev/
+    ├── docker-compose.yml
+    ├── .env
+    └── .env.example
 ```
 
-`docker/.env` містить реальні локальні значення та секрети і завжди
+`docker/prod/.env` та `docker/dev/.env` містять реальні значення та секрети і завжди
 знаходиться в `.gitignore`.
 
-`docker/.env.example` містить тільки приклад необхідних змінних без
-секретів і може зберігатися в Git.
+Відповідні `.env.example` містять тільки приклади необхідних змінних без
+секретів і можуть зберігатися в Git.
+
+Повний стандарт: [Dev and Prod Environments](environments.md).
 
 ### Bootstrap Properties
 
@@ -482,9 +496,13 @@ bootstrap/
 ```java
 @ConfigurationProperties(prefix = "browser")
 public record BrowserProperties(
+
         boolean headless,
+
         int timeout,
+
         int retries,
+
         String userAgent
 ) {}
 ```

@@ -14,6 +14,22 @@ AI повинен дотримуватися цих правил під час �
 
 ---
 
+## Dev/Prod Standard and Reference Scope
+
+Для нових проєктів та організації prod/dev використовуй
+[Dev and Prod Environments](environments.md): окремі `docker/prod/` і
+`docker/dev/`, backend та PostgreSQL у кожному Compose, окремі resources.
+Цей стандарт має пріоритет щодо layout, profiles і запуску середовищ.
+
+Наведені нижче single-compose / local-dev приклади з Family Menu
+зберігаються для пояснення configuration, bootstrap та networking.
+Вони не вимагають залишати dev application поза Docker. При container dev
+використовуй service DNS, при IDE-запуску — явне datasource override.
+Java 21 у старому Dockerfile — версія reference-проєкту; для іншого
+проєкту використовуй його фактичну Java version у build та runtime.
+
+---
+
 ## Standard Project Infrastructure
 
 Типова структура:
@@ -505,9 +521,13 @@ http://<API_HOST>:<API_PORT>/api/swagger-ui/index.html
 ```java
 @ConfigurationProperties(prefix = "browser")
 public record BrowserProperties(
+
         boolean headless,
+
         int timeout,
+
         int retries,
+
         String userAgent
 ) {}
 ```
@@ -591,7 +611,7 @@ Backend container явно запускається з:
 SPRING_PROFILES_ACTIVE: prod
 ```
 
-Docker Compose є production configuration, тому всі environment
+Наведений Compose є production configuration, тому всі environment
 variables, необхідні `application-prod.properties`, повинні бути
 передані container через `environment`.
 

@@ -69,13 +69,26 @@ runIfEnabled(steps.downloadImages(), downloadImagesUseCase::downloadImages);
 ```java
 @ConfigurationProperties(prefix = "steps")
 public record StepsProps(
-        Step discoverLinks,       // enabled + batchSize
+
+        Step discoverLinks, // enabled + batchSize
+
         Step parsePages,
+
         ToggleStep exportAuthors, // тільки enabled, без batchSize
+
         ...
 ) {
-    public record Step(boolean enabled, int batchSize) {}
-    public record ToggleStep(boolean enabled) {}
+    public record Step(
+
+            boolean enabled,
+
+            int batchSize
+    ) {}
+
+    public record ToggleStep(
+
+            boolean enabled
+    ) {}
 }
 ```
 

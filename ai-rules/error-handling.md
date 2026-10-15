@@ -67,11 +67,16 @@ shared/
 ```java
 package com.example.backend.shared.web;
 
-public record ErrorResponse(ErrorDetailsResponse error) {
+public record ErrorResponse(
+
+        ErrorDetailsResponse error
+) {
 
     public static ErrorResponse of(String code, String message) {
         ErrorDetailsResponse details = ErrorDetailsResponse.of(code, message);
-        return new ErrorResponse(details);
+        return new ErrorResponse(
+                details
+        );
     }
 }
 ```
@@ -86,18 +91,28 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.Map;
 
 public record ErrorDetailsResponse(
+
         String code,
+
         String message,
+
         @JsonInclude(JsonInclude.Include.NON_EMPTY) Map<String, String> errors
 ) {
 
     public static ErrorDetailsResponse of(String code, String message) {
-        return new ErrorDetailsResponse(code, message, Map.of());
+        return new ErrorDetailsResponse(
+                code,
+                message,
+                Map.of()
+        );
     }
 
     public static ErrorDetailsResponse validation(Map<String, String> errors) {
         return new ErrorDetailsResponse(
-                "INVALID_REQUEST", "Request validation failed", Map.copyOf(errors));
+                "INVALID_REQUEST",
+                "Request validation failed",
+                Map.copyOf(errors)
+        );
     }
 }
 ```
@@ -140,31 +155,37 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationFailure(
-            MethodArgumentNotValidException exception) {
+            MethodArgumentNotValidException exception
+    ) {
         Map<String, String> validationErrors = collectValidationErrors(exception);
         ErrorDetailsResponse details = ErrorDetailsResponse.validation(validationErrors);
-        ErrorResponse response = new ErrorResponse(details);
+        ErrorResponse response = new ErrorResponse(
+                details
+        );
 
         return ResponseEntity.badRequest().body(response);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleUnreadableRequest(
-            HttpMessageNotReadableException exception) {
+            HttpMessageNotReadableException exception
+    ) {
         return respond(HttpStatus.BAD_REQUEST, "INVALID_REQUEST",
                 "Request body is missing or invalid");
     }
 
     @ExceptionHandler(OptimisticLockingFailureException.class)
     public ResponseEntity<ErrorResponse> handleConcurrentUpdate(
-            OptimisticLockingFailureException exception) {
+            OptimisticLockingFailureException exception
+    ) {
         return respond(HttpStatus.CONFLICT, "CONCURRENT_UPDATE",
                 "The record was changed by another request; reload it and try again");
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataConflict(
-            DataIntegrityViolationException exception) {
+            DataIntegrityViolationException exception
+    ) {
         log.warn("Data integrity violation while processing a request", exception);
         return respond(HttpStatus.CONFLICT, "DATA_CONFLICT",
                 "The operation conflicts with existing data");
@@ -182,7 +203,8 @@ public class ApiExceptionHandler {
     }
 
     private Map<String, String> collectValidationErrors(
-            MethodArgumentNotValidException exception) {
+            MethodArgumentNotValidException exception
+    ) {
         Map<String, String> validationErrors = new LinkedHashMap<>();
 
         for (ObjectError error : exception.getBindingResult().getAllErrors()) {
@@ -197,7 +219,9 @@ public class ApiExceptionHandler {
     }
 
     private ResponseEntity<ErrorResponse> handleFrameworkFailure(
-            Exception exception, org.springframework.web.ErrorResponse webError) {
+            Exception exception,
+            org.springframework.web.ErrorResponse webError
+    ) {
         HttpStatusCode status = webError.getStatusCode();
         String code = "HTTP_" + status.value();
         String message = "The request could not be processed";
@@ -218,7 +242,10 @@ public class ApiExceptionHandler {
     }
 
     private ResponseEntity<ErrorResponse> respond(
-            HttpStatus status, String code, String message) {
+            HttpStatus status,
+            String code,
+            String message
+    ) {
         ErrorResponse response = ErrorResponse.of(code, message);
         return ResponseEntity.status(status).body(response);
     }
@@ -265,7 +292,8 @@ public class DocumentNotFoundException extends RuntimeException {
 ```java
 @ExceptionHandler(DocumentNotFoundException.class)
 public ResponseEntity<ErrorResponse> handleDocumentNotFound(
-        DocumentNotFoundException exception) {
+        DocumentNotFoundException exception
+) {
     return respond(HttpStatus.NOT_FOUND, "DOCUMENT_NOT_FOUND",
             "The requested document was not found");
 }
@@ -305,7 +333,8 @@ public class ErrorResponseWriter {
             HttpServletResponse response,
             HttpStatus status,
             String code,
-            String message) throws IOException {
+            String message
+    ) throws IOException {
         if (response.isCommitted()) {
             return;
         }

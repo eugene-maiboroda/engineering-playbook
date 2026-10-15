@@ -96,10 +96,14 @@ Datafarcio повернув:
 
 ``` java
 public record DatafarcioResponse(
-    String productId,
-    String productName,
-    BigDecimal price,
-    String providerInternalCode
+
+        String productId,
+
+        String productName,
+
+        BigDecimal price,
+
+        String providerInternalCode
 ) {}
 ```
 
@@ -188,9 +192,12 @@ price
 
 ``` java
 public record DatafarcioProductResponse(
-    String id,
-    String name,
-    BigDecimal price
+
+        String id,
+
+        String name,
+
+        BigDecimal price
 ) {}
 ```
 
@@ -455,9 +462,12 @@ ShoppingApi
 
 ``` java
 public record ProductData(
-    String id,
-    String name,
-    BigDecimal price
+
+        String id,
+
+        String name,
+
+        BigDecimal price
 ) {}
 ```
 
@@ -652,8 +662,10 @@ public interface MealPlanApi {
 
 ``` java
 public record MealPlanView(
-    String id,
-    List<MealView> meals
+
+        String id,
+
+        List<MealView> meals
 ) {}
 ```
 
@@ -746,9 +758,12 @@ class RecipeCache {
 
 ``` java
 public record RecipeCacheEntry(
-    String id,
-    String name,
-    List<String> ingredients
+
+        String id,
+
+        String name,
+
+        List<String> ingredients
 ) {}
 ```
 

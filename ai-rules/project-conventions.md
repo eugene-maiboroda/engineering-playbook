@@ -291,6 +291,121 @@ Playbook і погоджений стиль проєкту.
 `var` дозволений лише в тестах, створених за правилами
 [Testing Policy](general.md#testing-policy).
 
+## Agreed Java Code Style
+
+Цей стиль обов'язковий для всіх проєктів: застосовуй його одразу до нового
+коду та змінюваних фрагментів. Орієнтир — погоджений readability refactor
+`features/projects/main/services/ProjectService.java` та погоджені
+security/users класи. Нижче зафіксовано самі правила, тому читання цих
+проєктних файлів не є обов'язковою залежністю для інших проєктів.
+
+Старі сторонні класи проєктів масово не форматуй без доручення.
+Наявні приклади Playbook залишаються актуальними: кожен показує рішення
+для своєї ситуації. Нові правила уточнюють оформлення, а не скасовують
+попередні приклади, їхні фабрики, інваріанти чи архітектурні підходи.
+Підтримуй оформлення прикладів узгодженим, зберігаючи їхній зміст.
+Вибирай доречний приклад за контекстом задачі; не нав'язуй один шаблон
+усім ситуаціям і не перенось бізнес-рішення механічно.
+
+### Enum and Record
+
+- Enum: відступ 4 пробіли, кожна константа на окремому рядку.
+  Порожній рядок після `{` та між константами.
+- Record: `(` одразу після назви, потім порожній рядок. Кожен компонент
+  окремим рядком із відступом 8 пробілів; між компонентами порожній рядок.
+  Закривна `)` на окремому рядку. Анотацію залишай на рядку компонента,
+  якщо він читабельний і вкладається в межу рядка; інакше перенось анотацію.
+  Правило діє для DTO, entities, search records і вкладених records.
+
+```java
+public enum ProjectStatus {
+
+    ACTIVE,
+
+    DISABLED
+}
+```
+
+```java
+public record ProjectRequest(
+
+        @NotBlank String name,
+
+        @Nullable String notes
+) {
+}
+```
+
+### Class Structure and Logical Steps
+
+- Порядок: константи → final залежності → public методи сценаріїв →
+  private допоміжні методи.
+- Public метод показує послідовний сценарій; private метод — цілісний
+  названий крок. Не створюй helper для кожного рядка.
+- Порожніми рядками відділяй отримання даних, перевірки/early return,
+  побудову об'єкта, запис і формування результату. Не зливай метод у
+  суцільний блок і не відділяй механічно кожен рядок.
+- Замість вкладених обчислень в аргументах вводь змістовні локальні змінні:
+  `total`, `activeCount`, `inactiveCount`, `draftCount`. Не створюй
+  проміжні змінні, які не допомагають читанню.
+- Повторні immutable значення винось в іменовану константу на кшталт
+  `EMPTY_COUNTS` за реального повторення. Не створюй константу для
+  кожного літерала або одноразового об'єкта.
+- `toRespond()` послідовно відображає поля. Цілісну логіку, наприклад
+  `availableActions()`, тримай в окремому private методі. Не створюй
+  mapper/service класи лише заради скорочення поточного класу.
+  Це правило оформлення не переносить HTTP-мапінг через архітектурні межі.
+
+### Line Breaks, Builders and Arguments
+
+Орієнтуйся на налаштовану праву межу рядка (right margin) IntelliJ IDEA
+у конкретному проєкті. Не вигадуй універсальний ліміт символів.
+Короткий зрозумілий виклик, сигнатура, `return` або `throw` лишається
+в одному рядку, якщо вкладається в цю межу, крім явних правил нижче.
+
+- Builder завжди багаторядковий, навіть якщо вміщається: початковий
+  вираз окремо, кожен `.field(...)`/`.set(...)` з нового рядка,
+  `.build()` також окремо.
+- Створення DTO, зокрема `new XxxRespond(...)`, завжди оформлюй
+  багаторядково: один аргумент на рядок, закривна дужка окремо,
+  навіть якщо весь виклик вміщається в один рядок.
+- У ланцюжку `.orElse(...)` та `.orElseThrow(...)` починай з нового рядка
+  перед крапкою, як у погодженому `ProjectService`. Коротку lambda з
+  `new Exception(...)` залишай на цьому рядку, якщо вона вміщається.
+- Довгі stream, Criteria, Query та options chains рознось за кроками:
+  кожен перенесений виклик починається з крапки на новому рядку.
+  Вкладені `orOperator`/`andOperator` оформлюй з окремим рядком на кожну
+  умову та відповідним відступом.
+- Довгі сигнатури, звичайні виклики й конструктори рознось по одному
+  параметру/аргументу на рядок, закривну дужку — окремо. Особливо
+  уважно оформлюй Mongo-виклики. Короткі виклики без зазначених вище
+  винятків не розтягуй механічно.
+- Простий тернарний вираз, як у `statusOf()`, лишай в один рядок.
+  Довгі гілки перенось; вкладені тернарні вирази не використовуй.
+
+```java
+ProjectSearch search = ProjectSearch.builder()
+        .ownerUserId(currentUser.id())
+        .text(text)
+        .build();
+
+ProjectEntity project = projectDao.findProjectById(projectId)
+        .orElseThrow(() -> new ProjectNotFoundException(projectId));
+
+return new ProjectRespond(
+        project.id(),
+        project.name(),
+        availableActions(project, currentUser)
+);
+```
+
+### Readability Refactor Boundaries
+
+Зберігай бізнес-правила, порядок операцій, `null`/`false` semantics,
+Mongo guards та API-контракти. Не додавай нові actions, поля чи абстракції
+«для зручності». Якщо виявлено непогоджену архітектурну або продуктову
+неоднозначність — спочатку постав питання; не вирішуй її форматуванням.
+
 ## Examples
 Якщо для розуміння призначення компонента потрібно відкривати його реалізацію, швидше за все, назва вибрана невдало.
 
@@ -574,8 +689,11 @@ Compact constructor залишається єдиним місцем перев�
 import java.util.Objects;
 
 public record SendMessageResult(
+
         SendOutcome outcome,
+
         String messageId,
+
         SendError error
 ) {
 
@@ -596,15 +714,27 @@ public record SendMessageResult(
     }
 
     public static SendMessageResult accepted(String messageId) {
-        return new SendMessageResult(SendOutcome.ACCEPTED, messageId, null);
+        return new SendMessageResult(
+                SendOutcome.ACCEPTED,
+                messageId,
+                null
+        );
     }
 
     public static SendMessageResult rejected(SendError error) {
-        return new SendMessageResult(SendOutcome.REJECTED, null, error);
+        return new SendMessageResult(
+                SendOutcome.REJECTED,
+                null,
+                error
+        );
     }
 
     public static SendMessageResult unknown(SendError error) {
-        return new SendMessageResult(SendOutcome.UNKNOWN, null, error);
+        return new SendMessageResult(
+                SendOutcome.UNKNOWN,
+                null,
+                error
+        );
     }
 }
 ```
@@ -619,8 +749,16 @@ return SendMessageResult.rejected(error);
 Уникати:
 
 ```java
-return new SendMessageResult(SendOutcome.ACCEPTED, messageId, null);
-return new SendMessageResult(SendOutcome.REJECTED, null, error);
+return new SendMessageResult(
+        SendOutcome.ACCEPTED,
+        messageId,
+        null
+);
+return new SendMessageResult(
+        SendOutcome.REJECTED,
+        null,
+        error
+);
 ```
 
 ## Why
@@ -648,3 +786,33 @@ web-межі; бізнес-винятки належать своїм модул
 
 Структура, правила та reference implementation:
 [Error Handling](error-handling.md).
+
+
+---
+
+# 20. Web API Contracts
+
+## Rule
+
+Для сутностей із вибором дій backend повертає `availableActions` з
+урахуванням прав і стану. Endpoint операції повторно перевіряє ці умови.
+Для пагінованих HTTP-списків використовуй Spring Data `PagedModel<T>`
+зі сторінкою DTO; пагінація та обмеження доступу виконуються в базі даних.
+
+Правила, межі застосування та приклади:
+[Web API Contracts](web-api.md).
+
+
+---
+
+# 21. Isolated Dev and Prod Environments
+
+## Rule
+
+Prod та dev мають окремі Docker Compose projects, backend/DB services,
+networks, volumes, env-файли, credentials і порти. Спочатку формується
+prod, потім dev за тією самою структурою; існуючі production data та
+resource names зберігаються до явної міграції.
+
+Структура, повні приклади та порядок реалізації:
+[Dev and Prod Environments](environments.md).
