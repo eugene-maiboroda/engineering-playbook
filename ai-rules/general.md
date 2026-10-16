@@ -11,8 +11,8 @@
    - `ai-rules`;
    - доступні `architectures`;
    - `project-conventions`;
-   - `infrastructure`;
-   - `environments`, якщо задача стосується prod/dev або Docker deployment;
+   - `infrastructure` — configuration-код, bootstrap та typed properties;
+   - `environments` — application properties, Docker Compose, `.env` та prod/dev;
    - `error-handling`, якщо проєкт має HTTP API;
    - `web-api`, якщо проєкт має HTTP API;
    - релевантні `principles`, `decisions` та інші матеріали.
@@ -154,7 +154,7 @@ AI **не переходить до Planning автоматично**.
 1. створює/оновлює `roadmap`;
 2. створює/оновлює `runtime`;
 3. фіксує погоджену архітектуру та основні technical decisions;
-4. формує початковий project foundation відповідно до `infrastructure.md`.
+4. формує початковий project foundation відповідно до [infrastructure.md](infrastructure.md) та [environments.md](environments.md).
 
 Початковий foundation може включати:
 
@@ -173,7 +173,7 @@ docker-compose.yml
 basic package structure
 ```
 
-Конкретний набір визначається потребами проєкту та правилами `infrastructure.md`.
+Конкретний набір визначається потребами проєкту та правилами [infrastructure.md](infrastructure.md) та [environments.md](environments.md).
 
 На цьому етапі створюється **каркас проєкту**, а не business functionality.
 

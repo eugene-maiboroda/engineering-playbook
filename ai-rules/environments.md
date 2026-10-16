@@ -1,9 +1,10 @@
 # Dev and Prod Environments
 
 Стандарт окремих середовищ для backend-проєктів на основі WhatsApp Midwives.
-Застосовується разом з [Infrastructure Rules](infrastructure.md). Тут визначено
-актуальну організацію prod/dev; старі single-compose приклади infrastructure
-залишаються прикладами окремих механізмів, а не альтернативним default layout.
+Налаштування середовищ: `application*.properties`, Docker Compose, `.env`,
+Dockerfile та запуск prod/dev. Код configuration classes, bean wiring,
+bootstrap і typed properties описано в [Infrastructure](infrastructure.md).
+Застосовуй, якщо проєкт не має іншого явно погодженого стандарту.
 
 ## Core Rule
 
@@ -39,7 +40,8 @@ project/
 ```
 
 Реальні `.env` локальні та ignored; `.env.example` містять лише безпечні
-приклади. У вихідному проєкті env examples відсутні, тому це доповнення
+приклади та зберігаються в Git як перелік потрібних змінних.
+У вихідному проєкті env examples відсутні, тому це доповнення
 до reusable стандарту, а не копія його секретів.
 
 ```gitignore
@@ -217,8 +219,7 @@ POSTGRES_PASSWORD=replace-with-unique-dev-password
 
 Порти наведено за розділенням у reference, а не як глобально обов'язкові числа.
 На shared server перевір відсутність конфліктів. Для remote dev `API_HOST`
-має відповідати зовнішньому dev hostname. `server.host` — custom metadata
-для URL, а не bind address Spring Boot.
+має відповідати зовнішньому dev hostname.
 
 `.env` використовується Compose для interpolation, але не передає всі
 значення в container автоматично. Кожне потрібне application значення
@@ -240,8 +241,10 @@ spring.jpa.properties.hibernate.jdbc.time_zone=UTC
 spring.sql.init.mode=never
 ```
 
-Context path, proxy headers strategy та інші defaults адаптуються до
-фактичного проєкту. У reference `spring.profiles.default=dev`; це допустимий
+Спільні properties не дублюються між profiles. Application name, context path,
+datasource driver/dialect, SQL logging/formatting і proxy headers strategy
+розміщуються у common properties, якщо однакові в обох середовищах.
+Значення адаптуються до фактичного проєкту. У reference `spring.profiles.default=dev`; це допустимий
 local default, але deployment завжди явно задає свій profile.
 
 `application-prod.properties`:
@@ -282,6 +285,76 @@ loopback. Dev і prod — два PostgreSQL services з окремими volumes
 backend; для prod зміни schema потребують backup і плану відновлення.
 Зміна `POSTGRES_DB/USER/PASSWORD` у env не перестворює користувачів і базу
 в уже ініціалізованому PostgreSQL volume — потрібна явна DB-операція.
+
+## API Port and Host
+
+### API Port: Single Source of Truth
+
+Production API port береться з `docker/prod/.env`.
+Наприклад:
+
+```dotenv
+API_PORT=8082
+```
+
+Повний ланцюжок передачі значення:
+
+```text
+docker/prod/.env
+ │
+ └── API_PORT=8082
+       │
+       ▼
+docker/prod/docker-compose.yml
+       │
+       ├── ports: ${API_PORT}:${API_PORT}
+       │
+       └── environment: API_PORT=${API_PORT}
+                 │
+                 ▼
+       application-prod.properties
+                 │
+                 └── server.port=${API_PORT}
+                           │
+                           ▼
+                        AppProps
+                           │
+                           ▼
+                        AppRunner
+                           │
+                           ▼
+                  correct Swagger URL
+```
+
+Compose використовує те саме значення для публікації порту та передачі
+`API_PORT` у backend container. Spring підставляє його в `server.port`,
+`AppProps` читає налаштований порт, а `AppRunner` використовує його
+разом із host і context path для Swagger URL.
+
+Не допускається незалежний hardcoded порт у profile:
+
+```properties
+server.port=8082
+```
+
+Якщо Compose читає `API_PORT` із `.env`, а properties містять окреме число,
+зміна `.env` оновить port mapping, але application може продовжити слухати
+старий порт. Це створює два sources of truth та неузгоджений Swagger URL.
+
+Правильно:
+
+```properties
+server.port=${API_PORT}
+```
+
+Те саме правило діє для dev через `docker/dev/.env` та dev Compose.
+`server.port` керує портом сервера; `server.host` — custom metadata для URL,
+а не bind address. Приклади вище припускають однаковий host/container API port,
+як у стандартних Compose цього документа.
+
+За reverse proxy узгодь зовнішні scheme/host/port та forwarded headers
+strategy з deployment. Код читання цих properties і startup URL описано
+в [Infrastructure — Startup URL Contract](infrastructure.md#startup-url-contract).
 
 ## Integrations and External Effects
 
@@ -335,7 +408,12 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 JAR pattern адаптуй до artifactId і перевір, що він вибирає один executable
 JAR. `EXPOSE` — документація image, фактичний порт задають `API_PORT`,
 `server.port` і Compose mapping; dev може використовувати інший порт.
-Maven flags у reference пропускають тести; це не вимога додавати тести.
+Maven flags у reference пропускають тести; це не вимога додавати або
+видаляти тести. Runtime image містить лише JRE та executable JAR, без Maven.
+Окремий `COPY pom.xml` перед source дозволяє повторно використати dependency
+layer, якщо build dependencies не змінилися. Target platform визначай за
+deployment host, не копіюй `linux/amd64` механічно. При зміні стандартного
+порту онови також документаційний `EXPOSE`.
 
 ## Commands and Deployment
 
@@ -374,7 +452,10 @@ resources як спосіб «полагодити» deployment. Якщо іст
 6. Перевір Compose без друку секретів, env/profile consistency та ізоляцію БД.
 7. Перевір потрібні schema, health і зовнішні ефекти до ввімкнення інтеграцій.
 8. Після дозволеного deployment перевір health/logs обох середовищ.
-   Не створюй нових тестів автоматично: діє [Testing Policy](general.md#testing-policy).
+   Перевірку configuration-коду виконуй за [Infrastructure](infrastructure.md).
+9. Після рефакторингу повтори доречні build/static та runtime checks.
+   Infrastructure/CI не є підставою додавати тести: застосовуй
+   [Testing Policy](general.md#testing-policy).
 
 ## References
 
