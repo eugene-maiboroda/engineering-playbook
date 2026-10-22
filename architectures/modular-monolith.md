@@ -1,7 +1,3 @@
----
-title: Modular Monolith
----
-
 # Модульний моноліт --- Feature Modules First
 
 Еталонний підхід для бізнес-застосунків, які розробляються і деплояться
@@ -89,45 +85,127 @@ com.familymenu.backend
 
 # Структура одного модуля
 
-Не потрібно механічно створювати однакові папки у кожному модулі.
-
-Маленький модуль може бути плоским:
-
-```text
-shopping/
-├── ShoppingApi.java
-├── ShoppingService.java
-├── ShoppingRepository.java
-├── ShoppingList.java
-└── ShoppingListEntity.java
-```
-
-Коли модуль росте, його можна деталізувати:
+Фіча спочатку визначає свій ownership, а її вхідні контракти зібрані в
+`api/`. Це пакет усередині фічі, а не глобальна папка всіх фіч застосунку.
+Фічі можуть лежати прямо в base package або під `features/`.
 
 ```text
-shopping/
+<feature>/
 ├── api/
-│   ├── ShoppingApi.java
-│   └── dto/
+│   ├── internal/
+│   │   ├── FeatureApi.java
+│   │   ├── dto/                 # лише міжфічевий контракт
+│   │   └── exception/           # помилки цього Java-контракту
+│   ├── web/
+│   │   ├── controllers/
+│   │   ├── requests/
+│   │   ├── responses/
+│   │   ├── dto/                 # допоміжні типи лише HTTP-контракту
+│   │   ├── exception/           # HTTP-specific помилки / їх мапінг
+│   │   └── mappers/             # якщо потрібен окремий mapper
+│   ├── dto/                     # спільний контракт internal + web
+│   └── exception/               # спільні контрактні бізнес-помилки
 ├── service/
-│   ├── ShoppingService.java
-│   └── ShoppingListExportService.java
+│   ├── FeatureService.java      # основний сервіс / оркестратор
+│   └── usecase/                 # коли потрібна декомпозиція
+│       ├── CreateFeatureUseCase.java
+│       └── UpdateFeatureUseCase.java
 ├── domain/
-│   ├── ShoppingList.java
-│   └── ShoppingListItem.java
 ├── repository/
-│   └── ShoppingRepository.java
 ├── persistence/
-│   ├── ShoppingListEntity.java
-│   └── ShoppingMapper.java
-└── web/                 # якщо HTTP endpoint природно належить модулю
-    └── ShoppingController.java
+├── integration/                 # лише локальні зовнішні інтеграції
+└── config/                      # лише локальний wiring
 ```
 
-**Структура повинна рости разом зі складністю модуля.**
+Це карта відповідальностей, не шаблон для генерації всіх папок.
+Створюй тільки потрібні пакети: web-only фічі не потрібен порожній
+`internal/`, а internal-only capability не потребує controller.
+Маленький модуль може мати сервіс і repository прямо в корені;
+наявні API-контракти при цьому групуються під `api/`.
 
-Не створювати `api/service/domain/repository/persistence/mapper/...`,
-якщо в кожній папці буде по одному класу і від цього немає користі.
+Внутрішні пакети залежать від проєкту. У Nikola SaaS еквівалентні ролі:
+`main/services`, `main/usecases`, `main/mappers`, `db/daos`, `db/entities`,
+`db/models`, `net`; у Midwives — `service`, `service/usecase`, `domain`,
+`persistence`, локальні integration-пакети. Не потрібно переносити один
+layout на інший проєкт. Наявні `responds` у Nikola та `responses` у
+Midwives, `exception`/`exceptions`, `usecase`/`usecases` зберігаються за
+конвенцією проєкту; у прикладах тут використано `responses`.
+
+## Як вибрати місце DTO та exception
+
+- `api/internal/dto` — команди, результати, enum-и та events публічного
+  Java API фічі, потрібні іншим модулям.
+- `api/web/requests` і `api/web/responses` — HTTP request/response envelopes;
+  `api/web/dto` — інші типи лише цього HTTP-контракту, наприклад UI action.
+- `api/dto` — DTO або enum із однаковою семантикою, які справді є спільним
+  контрактом internal і web **цієї фічі**. Це не глобальний `shared/dto`.
+  Спільний DTO може бути безпосереднім HTTP body, якщо форми збігаються;
+  не потрібні копія і mapper лише заради іншого пакету.
+- Не перенось кожен internal DTO в `api/dto` тільки тому, що controller
+  читає його для мапінгу. Якщо HTTP має інші поля, validation чи lifecycle,
+  web envelope залишається окремим, а спільні типи перевикористовуються.
+- `api/internal/exception` — очікувані помилки Java API, які має знати
+  consumer; `api/exception` — такі самі помилки, спільні обом входам.
+  Вони не залежать від HTTP. `api/web/exception` — лише web-specific
+  помилки й HTTP-мапінг. Приватні помилки реалізації лишаються всередині
+  модуля; не потрібно експортувати їх усі в API.
+
+Domain, persistence entity/projection, SDK DTO та cache representation
+зберігають свої ролі й не стають API DTO через однакові поля.
+Деталі та приклади — [API boundaries, DTO, integrations та cache](modular-monolith-integrations-dto-cache.md).
+
+## Сервіс і use cases
+
+Простий сценарій реалізується в сервісі без обов'язкового шару use cases.
+Коли сервіс поєднує декілька самостійних сценаріїв або складних операцій,
+виділяй їх у `service/usecase` (у Nikola — `main/usecases`). Основний
+сервіс залишається точкою входу та оркестратором: показує послідовність,
+делегує операції, узгоджує результат. Детальні правила кожної операції
+мають одне місце реалізації у відповідному підсервісі.
+
+```text
+api/web/controllers ──→ FeatureService ──→ usecase/CreateFeatureUseCase
+                               │
+api/internal/FeatureApi ────────┘        → usecase/UpdateFeatureUseCase
+```
+
+Стрілка від `FeatureApi` означає виклик його реалізації через DI.
+Сервіс може сам реалізувати API (як `MidwifeService implements MidwifeApi`),
+або окремий `Internal*Service` реалізує потрібні міжфічеві можливості
+(як `InternalWorkflowService implements WorkflowsApi` у Nikola).
+Не створюй forwarding wrapper чи service interface автоматично.
+
+Назва підсервісу може бути `*UseCase` з `execute(...)` або змістовний
+`*Service` з кількома пов'язаними методами — відповідно до проєкту.
+Не потрібні interface для кожного use case, generic dispatcher або
+ланцюжок порожніх делегувань. Вхідний adapter може викликати самостійний
+use case напряму, якщо оркестрація не потрібна. Головний сервіс координує
+свою capability, а не стає єдиним god-service для всіх операцій модуля.
+
+При декомпозиції зберігай порядок дій, транзакційні межі, retry та
+idempotency: перенесення методу в інший Spring bean може змінити дію
+`@Transactional`. Use cases працюють зі своїми даними й чужими
+`api/internal` контрактами; consumer не імпортує чужий use case.
+
+## Зіставлення реальних проєктів
+
+Перевірено за локальним кодом Nikola SaaS та WhatsApp Midwives 2026-10-21:
+
+| Роль | Nikola SaaS | WhatsApp Midwives |
+| --- | --- | --- |
+| Межа фічі | `features/projects/api/{internal,web}` | `midwife/api/{internal,web}` |
+| Internal-only DTO | `users/api/internal/dto/UserView` | `customer/api/internal/dto/CustomerView` |
+| Спільний internal + web контракт | контрактні enum-и наразі також використовуються з `api/internal/dto`, наприклад `UserStatus` | `midwife/api/dto/MidwifeView`, `booking/settings/api/dto/BookingSettingsView` |
+| HTTP DTO | `projects/api/web/{requests,responds}` | `booking/api/web/{requests,responses,dto}` |
+| Реалізація Java API | `workflows/main/services/InternalWorkflowService` | `midwife/service/MidwifeService` |
+| Декомпозиція | `workflows/main/usecases/RegisterWorkflowUseCase` | `booking/service/usecase/BookingIntakeService`, `BookingMidwifeReplyService` |
+| Координація складного процесу | сервіси та entrypoints за своїми сценаріями | `booking/service/workflow/BookingWorkflowService`, `booking/service/conversation/BookingMotherConversationService` |
+
+Спільне правило узагальнює ці практики та нове рішення про `api/dto`.
+Це не твердження, що кожен пакет обох проєктів уже відповідає еталону:
+наявні webhook/payment та інші винятки не є підставою їх автоматично
+мігрувати. З цих прикладів беремо організацію контрактів і сервісів;
+Maven reactor, Mongo/JPA та продуктові правила не стають загальними вимогами.
 
 ---
 
@@ -255,7 +333,9 @@ persistence model.**
 
 # API не означає HTTP
 
-`RecipeApi` у модульному моноліті --- це звичайний Java contract.
+`api/` об’єднує вхідні межі фічі. `RecipeApi` в `api/internal` ---
+звичайний Java contract; `api/web` --- HTTP adapter. Слово `internal`
+означає виклик усередині застосунку, а не приватну реалізацію модуля.
 
 ```java
 private final RecipeApi recipeApi;
@@ -284,7 +364,8 @@ Module API --- внутрішня межа між бізнес-модулями.
 HTTP endpoint повинен передавати запит бізнес-модулю, який володіє use
 case.
 
-Можливі дві організації.
+Основна організація — `api/web` усередині фічі. Окремий transport layer
+залишається допустимим свідомим винятком.
 
 ### Варіант 1 --- controller всередині модуля
 
@@ -292,8 +373,10 @@ case.
 
 ```text
 shopping/
-├── web/
-│   └── ShoppingController.java
+├── api/
+│   └── web/
+│       └── controllers/
+│           └── ShoppingController.java
 ├── service/
 ├── repository/
 └── domain/
@@ -315,7 +398,7 @@ web/
 
 Але `web/` не повинен містити бізнес-логіку.
 
-Default для модульного моноліту: **controller тримати біля модуля**,
+Default для модульного моноліту: **controller тримати в `module/api/web/controllers`**,
 якщо немає причини централізувати transport layer.
 
 ---
@@ -430,7 +513,9 @@ recipe/RecipeMetadataRepository
 
 ```text
 metrics/
-├── MetricsApi.java
+├── api/
+│   └── internal/
+│       └── MetricsApi.java
 ├── MetricsService.java
 └── MetricsRepository.java
 ```
@@ -641,8 +726,10 @@ architecture**.
 
 ```text
 shopping/
-├── web/
-│   └── ShoppingController.java
+├── api/
+│   └── web/
+│       └── controllers/
+│           └── ShoppingController.java
 ├── service/
 │   ├── ShoppingService.java
 │   └── ShoppingListExportService.java
@@ -833,7 +920,8 @@ shopping/ai/
 ```text
 ai/
 ├── api/
-│   └── AiApi.java
+│   └── internal/
+│       └── AiApi.java
 ├── service/
 ├── model/
 ├── provider/
@@ -940,7 +1028,9 @@ shopping/
 
 ```text
 family/
-├── FamilyApi.java
+├── api/
+│   └── internal/
+│       └── FamilyApi.java
 ├── FamilyService.java
 └── FamilyRepository.java
 ```
@@ -1069,8 +1159,8 @@ ShoppingService
 Бажано:
 
 ```text
-shopping → recipe.api
-shopping → mealplan.api
+shopping → recipe.api.internal
+shopping → mealplan.api.internal
 ```
 
 Не бажано:
@@ -1246,8 +1336,13 @@ com.familymenu.backend
 
 ├── recipe/
 │   ├── api/
-│   │   ├── RecipeApi.java
-│   │   └── RecipeView.java
+│   │   ├── internal/
+│   │   │   ├── RecipeApi.java
+│   │   │   └── dto/
+│   │   │       └── RecipeView.java
+│   │   └── web/
+│   │       └── controllers/
+│   │           └── RecipeController.java
 │   ├── domain/
 │   │   ├── Recipe.java
 │   │   └── Ingredient.java
@@ -1256,30 +1351,25 @@ com.familymenu.backend
 │   │   └── RecipeExportService.java
 │   ├── repository/
 │   │   └── RecipeRepository.java
-│   ├── persistence/
-│   │   ├── RecipeEntity.java
-│   │   └── RecipeMapper.java
-│   └── web/
-│       └── RecipeController.java
-│
+│   └── persistence/
+│       ├── RecipeEntity.java
+│       └── RecipeMapper.java
 ├── mealplan/
 │   ├── api/
+│   │   └── web/
 │   ├── domain/
 │   ├── service/
 │   ├── repository/
-│   ├── persistence/
-│   └── web/
-│
+│   └── persistence/
 ├── shopping/
 │   ├── api/
+│   │   └── web/
 │   ├── domain/
 │   ├── service/
 │   │   ├── ShoppingService.java
 │   │   └── ShoppingListExportService.java
 │   ├── repository/
-│   ├── persistence/
-│   └── web/
-│
+│   └── persistence/
 ├── family/
 │   ├── api/
 │   ├── service/
@@ -1433,7 +1523,7 @@ Recipe Service
 ### 4. Це API, через яке інші модулі користуються capability?
 
 ```text
-→ <owner-module>/api
+→ <owner-module>/api/internal
 ```
 
 ### 5. Це технічна реалізація, яку поки використовує тільки один модуль?
@@ -1546,7 +1636,8 @@ Recipe Service
 
 1. Спочатку визначити business module owner.
 2. Новий функціонал розміщувати локально у власника.
-3. Інші модулі звертаються тільки через public module API.
+3. Інші модулі звертаються тільки через public `api/internal`; HTTP вхід —
+   `api/web`, спільні контрактні моделі цих входів — `api/dto`.
 4. Не використовувати repository/entity/internal service іншого модуля.
 5. Domain model належить модулю; не створювати глобальний domain без
    окремого рішення.

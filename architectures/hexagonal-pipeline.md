@@ -1,7 +1,3 @@
----
-title: Hexagonal Pipeline
----
-
 # Спрощена гексагональна архітектура — Pipeline
 
 Еталон: `si-article-pipeline-refactored` (NYPost article/video collector).
@@ -32,6 +28,23 @@ bootstrap/         точка запуску пайплайну: CommandLineRunn
 `adapter/` групується за доменом фічі (article, author, video...), а не за технічним типом
 (не буде окремо "repositories/", "clients/" на весь проєкт) — кожна фіча самодостатня,
 всередині неї вже є persistence/, mapper/ якщо треба.
+
+## Співвідношення з feature API та модульним монолітом
+
+`api/internal`, `api/web` та спільний `api/dto` описують організацію
+вхідних контрактів **feature-oriented модуля**; повне дерево — у
+[модульному моноліті](modular-monolith.md#структура-одного-модуля).
+Модульні межі та hexagonal isolation можуть співіснувати: web controller
+є inbound adapter, Java API capability — вхідним контрактом, а реалізація
+сценарію залишається в application. Не створюй дублюючі `FeatureApi` та
+`port/in/*UseCase` для однакової ролі лише заради двох назв архітектур.
+
+Для цього standalone pipeline вхід уже представлений `port/in` та
+`bootstrap`; не потрібно додавати HTTP/API папки без реального consumer
+чи перебудовувати дерево на фічі. Оркестратор і окремі use-case класи
+залишаються в `application/`, як описано нижче. Вимоги pipeline про
+незалежність кроків і передачу стану через БД стосуються цього шаблону,
+а не кожного `service/usecase` бізнес-модуля.
 
 ## Pipeline-оркестратор — головна відмінність від "просто гексагональної"
 

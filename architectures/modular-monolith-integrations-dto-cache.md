@@ -1,7 +1,3 @@
----
-title: Modular Monolith integrations, dto, cache
----
-
 # Модульний моноліт --- API boundaries, DTO, зовнішні інтеграції та cache
 
 Цей розділ доповнює основну нотатку про модульний моноліт і деталізує
@@ -25,6 +21,13 @@ title: Modular Monolith integrations, dto, cache
 
 Це різні boundaries і їх не треба змішувати.
 
+Фізичне дерево вхідних контрактів — `<feature>/api/internal` для Java API
+та `<feature>/api/web` для HTTP; спільні моделі цих двох входів —
+`<feature>/api/dto`. Повне дерево та декомпозиція сервісів визначені в
+[основній нотатці](modular-monolith.md#структура-одного-модуля).
+Outbound integrations і cache залишаються окремими відповідальностями;
+вони не переїжджають в `api/` через цю організацію входів.
+
 ------------------------------------------------------------------------
 
 # 1. Якщо зовнішня інтеграція потрібна тільки одному модулю
@@ -35,11 +38,11 @@ title: Modular Monolith integrations, dto, cache
 
 ``` text
 shopping/
-├── api/                         ← API модуля для ІНШИХ модулів
-│   ├── ShoppingApi.java
-│   └── dto/
-│       └── ShoppingView.java
-│
+├── api/
+│   └── internal/
+│       ├── ShoppingApi.java
+│       └── dto/
+│           └── ShoppingView.java
 ├── service/
 │   └── ShoppingService.java
 │
@@ -62,7 +65,7 @@ shopping/
 Перша:
 
 ``` text
-shopping/api/dto/ShoppingView
+shopping/api/internal/dto/ShoppingView
 ```
 
 --- це **наш контракт між модулями**.
@@ -501,9 +504,10 @@ datafarcioRawPayload
 > **Публічний контракт бізнес-модуля для інших модулів.**
 
 ``` text
-recipe/api/
+recipe/api/internal/
 ├── RecipeApi.java
-└── RecipeView.java
+└── dto/
+    └── RecipeView.java
 ```
 
 Наприклад:
@@ -529,10 +533,12 @@ Controller тут не потрібен.
 > **HTTP interface нашого application для зовнішнього світу.**
 
 ``` text
-recipe/web/
-├── RecipeController.java
-└── dto/
-    ├── CreateRecipeRequest.java
+recipe/api/web/
+├── controllers/
+│   └── RecipeController.java
+├── requests/
+│   └── CreateRecipeRequest.java
+└── responses/
     └── RecipeResponse.java
 ```
 
@@ -583,13 +589,13 @@ request.
                   │
                  HTTP
                   ▼
-            recipe/web
+            recipe/api/web
                   │
                   ▼
                 recipe
                   ▲
                   │
-             recipe/api
+             recipe/api/internal
                   ▲
                   │
               shopping
@@ -623,10 +629,10 @@ mealplan
 ``` text
 mealplan/
 ├── api/
-│   ├── MealPlanApi.java
-│   └── dto/
-│       └── MealPlanView.java
-│
+│   └── internal/
+│       ├── MealPlanApi.java
+│       └── dto/
+│           └── MealPlanView.java
 ├── domain/
 │   ├── MealPlan.java
 │   ├── Meal.java
@@ -990,7 +996,8 @@ cache policy застосовується однаково.
 ``` text
 recipe/
 ├── api/
-│   └── RecipeApi.java
+│   └── internal/
+│       └── RecipeApi.java
 ├── service/
 │   └── RecipeService.java
 ├── cache/
@@ -1242,24 +1249,43 @@ DTO живе **біля boundary, контракт якого вона пред�
 ### HTTP request/response нашого застосунку
 
 ``` text
-recipe/web/dto/
-├── CreateRecipeRequest.java
-└── RecipeResponse.java
+recipe/api/web/
+├── requests/
+│   └── CreateRecipeRequest.java
+└── responses/
+    └── RecipeResponse.java
 ```
 
 ### Контракт Recipe для інших модулів
 
 ``` text
-recipe/api/
+recipe/api/internal/
 ├── RecipeApi.java
-└── RecipeView.java
+└── dto/
+    └── RecipeView.java
 ```
 
 або:
 
 ``` text
-recipe/api/dto/RecipeView.java
+recipe/api/internal/dto/RecipeView.java
 ```
+
+### Спільний контракт internal і web однієї фічі
+
+```text
+midwife/api/dto/
+├── MidwifeView.java
+└── ScheduleRange.java
+```
+
+`MidwifeApi` та web controller можуть використовувати `MidwifeView`
+без дублювання, коли це однакова погоджена representation. Приклад із
+Midwives: `booking/settings/api/dto/BookingSettingsView` також є результатом
+Java API і HTTP-відповіддю. HTTP-specific request envelopes залишаються
+в `api/web/requests`; internal-only команди — в `api/internal/dto`.
+Однакові поля самі по собі ще не означають однаковий контракт.
+Не використовуй `api/dto` як склад domain, entities, provider чи cache моделей.
 
 ### Контракт Datafarcio
 
@@ -1307,21 +1333,25 @@ com.familymenu.backend
 
 ├── shopping/
 │   ├── api/
-│   │   ├── ShoppingApi.java
-│   │   └── ShoppingView.java
+│   │   ├── internal/
+│   │   │   ├── ShoppingApi.java
+│   │   │   └── dto/
+│   │   │       └── ShoppingView.java
+│   │   └── web/
+│   │       ├── controllers/
+│   │       │   └── ShoppingController.java
+│   │       └── responses/
+│   │           └── ShoppingResponse.java
 │   ├── domain/
 │   │   └── ShoppingList.java
-│   ├── service/
-│   │   └── ShoppingService.java
-│   └── web/
-│       ├── ShoppingController.java
-│       └── dto/
-│           └── ShoppingResponse.java
-│
+│   └── service/
+│       └── ShoppingService.java
 ├── recipe/
 │   ├── api/
-│   │   ├── RecipeApi.java
-│   │   └── RecipeView.java
+│   │   └── internal/
+│   │       ├── RecipeApi.java
+│   │       └── dto/
+│   │           └── RecipeView.java
 │   ├── domain/
 │   │   └── Recipe.java
 │   └── service/
@@ -1623,8 +1653,8 @@ AiResult
 Module API DTO залишається у module API:
 
 ``` text
-shopping/api/ShoppingView
-recipe/api/RecipeView
+shopping/api/internal/dto/ShoppingView
+recipe/api/internal/dto/RecipeView
 ```
 
 ### Крок 9
@@ -1632,7 +1662,7 @@ recipe/api/RecipeView
 Web DTO залишається біля controller:
 
 ``` text
-recipe/web/dto/RecipeResponse
+recipe/api/web/responses/RecipeResponse
 ```
 
 ### Крок 10
@@ -1659,8 +1689,8 @@ infrastructure/
 # Короткі правила для AI / coding agent
 
 1.  **API не означає Controller.**
-2.  `module/api` --- Java contract між бізнес-модулями.
-3.  `module/web` --- HTTP inbound boundary.
+2.  `module/api/internal` --- Java contract між бізнес-модулями.
+3.  `module/api/web` --- HTTP inbound boundary.
 4.  `integration/<provider>` --- outbound boundary до стороннього API.
 5.  External transport DTO живе біля конкретної integration/provider.
 6.  Якщо integration стає shared, її transport DTO переходять у shared
@@ -1669,8 +1699,9 @@ infrastructure/
     замовчуванням.
 8.  Module API повертає API DTO/read model (`RecipeView`,
     `MealPlanView`).
-9.  Не використовувати одну DTO одночасно як external response, domain
-    model і module API response.
+9.  Не використовувати одну DTO одночасно як provider response, domain
+    model і module API response. Спільний DTO для internal + web своєї
+    фічі допустимий в `api/dto`, коли контракт справді однаковий.
 10. Provider-specific DTO не повинна протікати у business services.
 11. За потреби mapper перетворює provider DTO у stable internal model.
 12. Якщо consumers не повинні залежати від конкретного provider ---
@@ -1708,8 +1739,9 @@ DTO живе біля свого контракту.
 ```
 
 ``` text
-Web DTO             → module/web/dto
-Module API DTO      → module/api[/dto]
+Web DTO             → module/api/web/{requests,responses,dto}
+Module API DTO      → module/api/internal/dto
+Shared API DTO      → module/api/dto (internal + web одного власника)
 External API DTO    → integration/provider/dto
 Shared provider DTO → shared/.../provider/dto
 Cache representation→ module/cache

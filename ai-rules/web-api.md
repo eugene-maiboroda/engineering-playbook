@@ -5,6 +5,18 @@
 формує HTTP-контракт, а бізнес-правила залишаються в application/domain.
 Формат помилок описано окремо в [Error Handling](error-handling.md).
 
+## Розташування контрактів
+
+У feature-oriented структурі HTTP boundary — `<feature>/api/web`:
+`controllers`, `requests`, `responses` (або `responds` за конвенцією
+проєкту), `dto`, `exception` та `mappers` за потреби.
+`api/internal` містить Java API фічі, а `api/dto` — погоджені спільні
+моделі internal і web. Web-only action enum належить `api/web/dto`;
+спільний контрактний status enum може належати `api/dto`.
+Не дублюй DTO лише заради двох входів і не експортуй HTTP-specific DTO
+як міжфічевий контракт. Правила вибору та повне дерево:
+[Структура одного модуля](../architectures/modular-monolith.md#структура-одного-модуля).
+
 ## Available Actions
 
 Для сутностей, над якими користувач має реальний вибір дій залежно від

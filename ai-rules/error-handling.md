@@ -23,11 +23,15 @@
 
 ```text
 shared/
-└── web/
-    ├── ErrorResponse.java
-    ├── ErrorDetailsResponse.java
-    ├── ApiExceptionHandler.java
-    └── ErrorResponseWriter.java
+└── api/
+    └── web/
+        ├── responses/
+        │   ├── ErrorResponse.java
+        │   └── ErrorDetailsResponse.java
+        ├── controllers/
+        │   └── ApiExceptionHandler.java
+        └── mappers/
+            └── ErrorResponseWriter.java
 ```
 
 Два records описують контракт, advice обробляє MVC exceptions, writer
@@ -36,6 +40,13 @@ shared/
 Це reference structure, а не вимога завжди мати рівно чотири класи.
 
 Бізнес-винятки залишаються в модулі, який володіє бізнес-правилом.
+Якщо вони є частиною public Java API, розміщуй їх у
+`<feature>/api/internal/exception`, а спільні internal + web контрактні
+помилки — у `<feature>/api/exception`. Вони не містять HTTP status чи
+`@ResponseStatus`. `api/web/exception` містить лише web-specific помилки
+або локальний HTTP-мапінг; загальний advice може залишатися в
+`shared/api/web`. Приватні exceptions не потрібно експортувати.
+Naming `exception`/`exceptions` та responses/responds адаптується до проєкту.
 Їх HTTP-мапінг додається до advice на web-межі з дотриманням public API
 та меж модулів; не імпортуй internal service classes іншого модуля.
 
@@ -65,7 +76,7 @@ shared/
 ## ErrorResponse.java
 
 ```java
-package com.example.backend.shared.web;
+package com.example.backend.shared.api.web.responses;
 
 public record ErrorResponse(
 
@@ -84,7 +95,7 @@ public record ErrorResponse(
 ## ErrorDetailsResponse.java
 
 ```java
-package com.example.backend.shared.web;
+package com.example.backend.shared.api.web.responses;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -129,7 +140,10 @@ Reference implementation використовує Spring Framework 6+ API.
 додаються за реальною потребою, як показано нижче.
 
 ```java
-package com.example.backend.shared.web;
+package com.example.backend.shared.api.web.controllers;
+
+import com.example.backend.shared.api.web.responses.ErrorResponse;
+import com.example.backend.shared.api.web.responses.ErrorDetailsResponse;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -277,7 +291,7 @@ DAO handlers потрібні лише в проєктах, де такі except
 Наприклад, модуль може публікувати такий application exception:
 
 ```java
-package com.example.backend.document.api;
+package com.example.backend.document.api.internal.exception;
 
 public class DocumentNotFoundException extends RuntimeException {
 
@@ -311,7 +325,9 @@ public ResponseEntity<ErrorResponse> handleDocumentNotFound(
 до фактичних dependencies. Версії не змінюються заради цього прикладу.
 
 ```java
-package com.example.backend.shared.web;
+package com.example.backend.shared.api.web.mappers;
+
+import com.example.backend.shared.api.web.responses.ErrorResponse;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
