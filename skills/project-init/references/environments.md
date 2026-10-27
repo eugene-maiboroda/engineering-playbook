@@ -455,7 +455,7 @@ resources як спосіб «полагодити» deployment. Якщо іст
    Перевірку configuration-коду виконуй за [Infrastructure](infrastructure.md).
 9. Після рефакторингу повтори доречні build/static та runtime checks.
    Infrastructure/CI не є підставою додавати тести: застосовуй
-   [Testing Policy](general.md#testing-policy).
+   [Testing Policy](../../../ai-rules/testing-policy.md).
 
 ## References
 

@@ -15,7 +15,7 @@
 спільний контрактний status enum може належати `api/dto`.
 Не дублюй DTO лише заради двох входів і не експортуй HTTP-specific DTO
 як міжфічевий контракт. Правила вибору та повне дерево:
-[Структура одного модуля](../architectures/modular-monolith.md#структура-одного-модуля).
+[Структура одного модуля](../../../architectures/modular-monolith.md#структура-одного-модуля).
 
 ## Available Actions
 
@@ -167,7 +167,7 @@ Spring Data `PagedModel` доступний із версії 3.3. Для ста
 3. Повторно використай перевірки фічі; не перенось бізнес-правила в controller.
 4. Перевір DTO, metadata, права доступу, сортування та межі page/size.
 5. Зміни наявного публічного контракту погоджуй відповідно до General Rules.
-   Тести автоматично не додавай: діє [Testing Policy](general.md#testing-policy).
+   Тести автоматично не додавай: діє [Testing Policy](../../../ai-rules/testing-policy.md).
 
 ## Reference
 

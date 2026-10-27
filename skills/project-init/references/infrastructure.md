@@ -82,9 +82,39 @@ Environment → application-*.properties → @ConfigurationProperties
             → application components / infrastructure bean wiring
 ```
 
-Typed properties розміщуються в `bootstrap/properties/`. Реєструй їх
-прийнятим у проєкті способом, наприклад через `@ConfigurationPropertiesScan` або
-`@EnableConfigurationProperties`.
+Typed properties розміщуй у `bootstrap/properties/`.
+
+## Application Entry Point
+
+У новому проєкті додай `@ConfigurationPropertiesScan` поруч із
+`@SpringBootApplication` на головному Application-класі. Використовуй
+імпорт `org.springframework.boot.context.properties.ConfigurationPropertiesScan`.
+Розташуй Application-клас у кореневому package, однаковому з groupId,
+щоб properties у його підпакетах потрапляли в scan. Не додавай зайвий
+package-рівень лише через artifactId.
+
+```java
+package com.familymenu;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+
+@SpringBootApplication
+@ConfigurationPropertiesScan
+public class FamilymenuBackendApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(FamilymenuBackendApplication.class, args);
+    }
+}
+```
+
+Підстав назви поточного проєкту. Якщо properties розташовані поза
+кореневим package, явно задай область scan. У наявному проєкті перевір
+чинну реєстрацію через scan або `@EnableConfigurationProperties` перед
+змінами; не додавай дублюючу реєстрацію. Перевір binding properties
+під час погодженої перевірки запуску; сам успішний compile не підтверджує binding.
 
 ## Typed Configuration Properties
 
@@ -99,7 +129,7 @@ public record BrowserProperties(
 
         boolean headless,
 
-2        int timeout,
+        int timeout,
 
         int retries,
 
@@ -277,4 +307,4 @@ environment configuration. При зміні порту або context path не
 2. Повторно використай існуючі компоненти; не додавай дублюючі beans.
 3. Розділяй configuration за відповідальністю, без business logic у wiring.
 4. Перевір binding properties, створення beans та коректність startup URL.
-5. Дотримуйся [Testing Policy](general.md#testing-policy).
+5. Дотримуйся [Testing Policy](../../../ai-rules/testing-policy.md).

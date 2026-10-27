@@ -25,4 +25,4 @@
 Джерела: [Modular Monolith](../architectures/modular-monolith.md),
 [DTO, integrations та cache](../architectures/modular-monolith-integrations-dto-cache.md),
 [Hexagonal Pipeline](../architectures/hexagonal-pipeline.md),
-[Package Responsibilities](../ai-rules/project-conventions.md#4-package-responsibilities).
+[Package Responsibilities](../skills/project-init/references/project-conventions.md#4-package-responsibilities).

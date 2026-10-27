@@ -406,7 +406,7 @@ http.exceptionHandling(exceptions -> exceptions
 3. Визнач реальні бізнес-помилки й погоджений HTTP-мапінг.
 4. Використовуй існуючу структуру та явні типи, без `var` і зайвих абстракцій.
 5. Перевір безпечність повідомлень, HTTP statuses, headers та єдність JSON.
-6. Не додавай тести автоматично: діє [Testing Policy](general.md#testing-policy).
+6. Не додавай тести автоматично: діє [Testing Policy](../../../ai-rules/testing-policy.md).
 
 ## References
 
