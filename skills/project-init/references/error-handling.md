@@ -21,23 +21,24 @@
 
 ## Reference Structure
 
+Для нового skeleton створи один package `shared.errorhandler` і рівно три
+базові класи без вкладених api/web/controllers/responses:
+
 ```text
 shared/
-└── api/
-    └── web/
-        ├── responses/
-        │   ├── ErrorResponse.java
-        │   └── ErrorDetailsResponse.java
-        ├── controllers/
-        │   └── ApiExceptionHandler.java
-        └── mappers/
-            └── ErrorResponseWriter.java
+└── errorhandler/
+    ├── ApiExceptionHandler.java
+    ├── ErrorResponse.java
+    └── ErrorDetailsResponse.java
 ```
 
-Два records описують контракт, advice обробляє MVC exceptions, writer
-серіалізує відповідь у servlet filters/Security handlers.
-Якщо немає такого використання поза MVC, writer не потрібно створювати.
-Це reference structure, а не вимога завжди мати рівно чотири класи.
+Два records описують контракт, advice обробляє MVC exceptions. Не створюй
+додаткові рівні пакетів за прикладами великих проєктів. Для наявного проєкту
+не перенось його класи без окремого доручення.
+Лише якщо обрано Security або є інший погоджений servlet-filter caller,
+додай `security/ErrorResponseWriter.java`; це адаптер поза трьома класами
+`shared/errorhandler`, який повторно використовує той самий ErrorResponse.
+Без такого caller writer не створюй.
 
 Бізнес-винятки залишаються в модулі, який володіє бізнес-правилом.
 Якщо вони є частиною public Java API, розміщуй їх у
@@ -45,7 +46,7 @@ shared/
 помилки — у `<feature>/api/exception`. Вони не містять HTTP status чи
 `@ResponseStatus`. `api/web/exception` містить лише web-specific помилки
 або локальний HTTP-мапінг; загальний advice може залишатися в
-`shared/api/web`. Приватні exceptions не потрібно експортувати.
+`shared/errorhandler`. Приватні exceptions не потрібно експортувати.
 Naming `exception`/`exceptions` та responses/responds адаптується до проєкту.
 Їх HTTP-мапінг додається до advice на web-межі з дотриманням public API
 та меж модулів; не імпортуй internal service classes іншого модуля.
@@ -76,7 +77,7 @@ Naming `exception`/`exceptions` та responses/responds адаптується �
 ## ErrorResponse.java
 
 ```java
-package com.example.shared.api.web.responses;
+package com.example.shared.errorhandler;
 
 public record ErrorResponse(
 
@@ -95,7 +96,7 @@ public record ErrorResponse(
 ## ErrorDetailsResponse.java
 
 ```java
-package com.example.shared.api.web.responses;
+package com.example.shared.errorhandler;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -140,10 +141,8 @@ Reference implementation використовує Spring Framework 6+ API.
 додаються за реальною потребою, як показано нижче.
 
 ```java
-package com.example.shared.api.web.controllers;
+package com.example.shared.errorhandler;
 
-import com.example.shared.api.web.responses.ErrorResponse;
-import com.example.shared.api.web.responses.ErrorDetailsResponse;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -325,9 +324,9 @@ public ResponseEntity<ErrorResponse> handleDocumentNotFound(
 до фактичних dependencies. Версії не змінюються заради цього прикладу.
 
 ```java
-package com.example.shared.api.web.mappers;
+package com.example.security;
 
-import com.example.shared.api.web.responses.ErrorResponse;
+import com.example.shared.errorhandler.ErrorResponse;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

@@ -1,16 +1,26 @@
 # Завдання субагенту-виконавцю
 
 Координатор підставляє значення перед dispatch. Це шаблон задачі, не
-команда запускати агента без обраного користувачем режиму.
+команда запускати агента без обраного користувачем режиму. Підстав фактичні
+абсолютні шляхи, ID та дозволи. Для IMPLEMENTATION_RULES_PATH використай
+`<PLAYBOOK_ROOT>/skills/executing-plans/references/implementation-rules.md`.
+Умови читання технічних references залиш у цьому файлі.
 
 ```text
 Ти виконуєш задачу [TASK_ID: назва].
-Спочатку прочитай exact brief: [BRIEF_PATH].
+Playbook root: [PLAYBOOK_ROOT].
+Перед реалізацією прочитай локальні інструкції проєкту та спільні правила:
+[IMPLEMENTATION_RULES_PATH]. Застосуй указані там умови читання references.
+Прочитай exact brief: [BRIEF_PATH].
 Специфікація й потрібні обмеження: [SPEC_PATH / GLOBAL_CONSTRAINTS].
 Місце задачі в процесі: [CONTEXT].
 Погоджені контракти/рішення попередніх задач: [DEPENDENCIES].
-Робочий каталог і дозволи: [WORKSPACE / PERMISSIONS].
-Baseline і користувацькі зміни, яких не можна торкатися: [BASELINE].
+Дозволений каталог запису: [WORKSPACE_PATH]. Дозволи: [PERMISSIONS].
+Baseline лише для читання: [BASELINE_ID / BASELINE_PATH].
+Захищені початкові користувацькі зміни: [PROTECTED_CHANGES].
+Пиши лише в дозволену робочу копію; не змінюй baseline або reviewed snapshot.
+Підсумковий review snapshot забезпечує координатор після твого report;
+не створюй його сам і не чекай його ID для повернення результату.
 Детальний звіт записуй у [REPORT_PATH].
 
 До початку назви суттєві неоднозначності або відсутній контекст.
@@ -46,7 +56,8 @@ scope, загальний план або дозволи.
 
 У REPORT_PATH запиши:
 - що реалізовано або що спробував;
-- змінені файли та прив’язку до baseline/result snapshot;
+- змінені файли та прив’язку до baseline; result snapshot ID — лише якщо
+  його вже надав координатор;
 - перевірки: команди/дії, фактичний вивід або evidence paths;
 - self-review, відхилення, відкриті питання та обмеження.
 
@@ -55,7 +66,7 @@ scope, загальний план або дозволи.
 
 Поверни коротко:
 Status: DONE | DONE_WITH_CONCERNS | NEEDS_CONTEXT | BLOCKED
-Результат і snapshot/report path.
+Результат, baseline ID і report path; result snapshot ID — за наявності.
 Стислий підсумок перевірок та concerns.
 Для NEEDS_CONTEXT/BLOCKED — конкретно чого бракує й що потрібно далі.
 DONE_WITH_CONCERNS — результат зроблено, але є сумнів; це не approval.

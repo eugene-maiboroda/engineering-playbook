@@ -1,8 +1,12 @@
 # Task Review — відповідність вимогам і якість
 
 Передай reviewer конкретний незмінний snapshot за
-[спільним контрактом (review-snapshots.md)](../executing-plans/references/review-snapshots.md).
+[review-snapshots.md](../executing-plans/references/review-snapshots.md).
+Перед запуском підстав конкретні абсолютні шляхи й ID. SPEC_PATH —
+погоджений design або інше джерело вимог із плану; REVIEW_PACKAGE_PATH —
+каталог зафіксованих матеріалів review, не package програмного коду.
 Review цього шаблону read-only: ні тести, ні записи, ні Git mutations.
+Збережи повернутий report як координатор; reviewer не записує файлів.
 
 ```text
 Перевір одну задачу [TASK_ID], не весь проєкт.
@@ -52,6 +56,8 @@ PASS | FAIL, підтверджені причини.
 Cannot verify: невідоме й потрібний контекст.
 ## Quality
 Approved | Needs fixes, коротке обґрунтування.
+Approved тут означає оцінку якості задачі, а не людський дозвіл на зміну
+вимог, merge, публікацію чи нову реалізацію.
 ## Findings
 Critical / Important / Minor; або «Підтверджених findings немає».
 Для кожного — exact evidence та реальний вплив.

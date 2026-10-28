@@ -79,13 +79,16 @@ AUTHENTICATION_REQUIRED, ACCESS_DENIED та INVALID_CREDENTIALS і безпеч�
 поточного проєкту. Не збирай створення користувача, encoder і policy в
 один довгий SecurityFilterChain method.
 
+ErrorResponseWriter розмісти в цьому самому package `security` за
+[error-handling.md](error-handling.md); базові три error-класи залиш у
+`shared.errorhandler`.
+
 ### SecurityConfig.java
 
 ```java
 package com.example.security;
 
 import com.example.bootstrap.properties.AuthProps;
-import com.example.shared.api.web.mappers.ErrorResponseWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;

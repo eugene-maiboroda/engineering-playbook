@@ -1,9 +1,16 @@
 # Scoped Re-review — перевірка виправлень
 
+Перед передачею reviewer підстав конкретні абсолютні шляхи й ID із
+підготовленого пакета. PACKAGE_PATH — каталог матеріалів review,
+HEAD_ID — ID нового snapshot, не обов’язково Git commit. Додай шлях
+до початкового task review report і всі ще відкриті причини FAIL / Needs fixes.
+Для фінального fix pass передай відповідний фінальний report.
+
 ```text
 Перевір fix round [TASK_ID / ROUND], не виконуй новий повний аудит.
 Brief/spec: [BRIEF_PATH / SPEC_PATH].
-Попередні findings дослівно: [FINDINGS].
+Попередній review report: [PREVIOUS_REVIEW_REPORT_PATH].
+Відкриті findings і причини FAIL / Needs fixes дослівно: [FINDINGS].
 Report із доданими fix evidence: [REPORT_PATH].
 Попередній reviewed snapshot: [FIX_BASE_ID].
 Новий immutable snapshot/manifest і fix diff: [HEAD_ID / PACKAGE_PATH].
@@ -23,6 +30,10 @@ Report із доданими fix evidence: [REPORT_PATH].
 ## Finding verdicts
 Для кожного: ADDRESSED | NOT_ADDRESSED | CANNOT_VERIFY,
 із exact file:line та поясненням.
+## Початкові причини FAIL / Needs fixes
+Для кожної: усунено / залишається / неможливо підтвердити; посилання
+на finding verdict і evidence. Незачеплені висновки попереднього report
+не переглядай без причини. Це scoped re-review, а не новий повний аудит.
 ## New breakage
 Нові проблеми у fix diff з severity/evidence; або «Немає».
 ## Out-of-scope observations

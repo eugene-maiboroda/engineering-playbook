@@ -1,3 +1,146 @@
+# Engineering Playbook → DevGuard: актуальний план
+
+Актуалізовано: 2026-10-28. Цей розділ має пріоритет над історичним журналом
+нижче. Чинна схема документів: design → plan → progress. Спільний журнал —
+`docs/progress.md`; назва «процес» у розмові не вводить окремий process-файл.
+План містить три milestones. Зараз дозволено виконати лише milestone 1;
+milestones 2–3 декомпозуються й реалізуються окремо після переходу в DevGuard.
+Це план роботи, не активний Skill і не команда запускати продуктову реалізацію.
+
+## Milestone 1 — завершення поточного етапу міграції Playbook
+
+Статус: завершено 2026-10-28. Наступний milestone — 2, починаючи з аудиту
+документів DevGuard; цей аудит і продуктову реалізацію ще не виконано.
+
+- [x] Завершити декомпозицію General; видалити General зі збереженням правил.
+- [x] Підготувати й погодити Brainstorm та Writing Plans.
+- [x] Створити Project Init: create, inspect, вхідні параметри й standards.
+- [x] Закрити базову пробу Project Init за збереженим звітом генерації/збірки.
+- [x] Виконати review та погоджені виправлення Executing Plans.
+- [x] Виконати review та погоджені виправлення Subagent-Driven Development.
+- [x] Узгодити автономність, передачу правил, snapshots, fix loop і final review.
+- [x] Прибрати застарілі переходи Brainstorm / Writing Plans та згадку General Rules.
+- [x] Звести фактичні статуси, відкладений scope й наступні milestones в цьому плані.
+- [x] Завершити структурну й ручну наскрізну звірку п’яти пакетів та зафіксувати результат.
+
+### Фактичний стан пакетів і спільних правил
+
+| Матеріал | Стан |
+| --- | --- |
+| [SKILL.md](../skills/brainstorming/SKILL.md) — Brainstorm | Погоджений пакет; фінальні переходи актуалізовано |
+| [SKILL.md](../skills/writing-plans/SKILL.md) — Writing Plans | Погоджений пакет; handoff відповідає локальним execution правилам |
+| [SKILL.md](../skills/project-init/SKILL.md) — Project Init | Базовий етап закрито; metadata 0.1.0-draft збережено; optional/runtime перевірки неповні |
+| [SKILL.md](../skills/executing-plans/SKILL.md) — Executing Plans | Review і погоджені виправлення виконано; metadata 0.1.1-draft збережено; поведінковий прогін не виконано |
+| [SKILL.md](../skills/subagent-driven-development/SKILL.md) — SDD | Review і погоджені виправлення виконано; metadata 0.1.1-draft збережено; поведінковий прогін не виконано |
+| [project-agent-instructions.md](../ai-rules/project-agent-instructions.md) | Підключення Playbook, локальні корені й policies |
+| [project-progress.md](../ai-rules/project-progress.md) | Один спільний журнал проєкту для всіх чатів та інструментів |
+| [testing-policy.md](../ai-rules/testing-policy.md) | Єдине повне джерело політики тестів |
+| [general-preservation-audit.md](general-preservation-audit.md) | Історична доказова карта збереження General, не активна інструкція |
+
+Завершення документального review не є заявою про production readiness,
+поведінковий eval, глобальну інсталяцію або готовий DevGuard runner.
+Draft metadata не змінюється автоматично від закриття цього milestone.
+
+### Чинні маршрути
+
+1. Прямий Create Project: явний запит і параметри → Project Init create →
+   перевірки → готова локальна папка та progress. Brainstorm не обов’язковий.
+2. Новий продукт: Brainstorm → погоджений design → Writing Plans → погоджений
+   plan → Project Init як задача створення основи → дозволені наступні задачі.
+3. Окремо дозволений Project Init після погодженого Brainstorm можливий до
+   планування решти реалізації. Саме завершення Brainstorm не запускає create.
+4. Наявний проєкт: inspect перевіряє факти; регенерація не виконується.
+   Конкретні виправлення — лише в дозволеному scope.
+5. Execution: основний агент або явно обраний SDD; доступність tool не є
+   дозволом делегувати. Нові тести, commit/push не додаються автоматично.
+
+## Milestone 2 — документи DevGuard та перша інтерактивна фаза
+
+Статус: наступний milestone; продуктові зміни ще не починати.
+
+1. Спочатку провести аудит `docs/` DevGuard: чинні й старі плани, roadmap,
+   runtime, рішення, фактичний код і незакомічені матеріали. Не видаляти файли
+   лише за назвою або давністю.
+2. Перенести задум/архітектуру в design, етапи й задачі — в plan, фактичний
+   стан та історію — у спільний progress. Зберегти унікальний зміст і докази,
+   перевірити посилання. Старі джерела позначати заміненими; видалення окремо.
+3. Актуалізувати локальні інструкції й архітектурні межі DevGuard. Перевірити
+   чинні фазові обмеження; нову продуктову фазу погодити до реалізації.
+4. Після цього підготувати design і мікроплани першої інтерактивної фази:
+   локальний Codex app-server, чат, thread identity, події, погодження,
+   переривання/відновлення, Project/Playbook roots і дозволи.
+5. Додати Brainstorm, прямий Project Init create/inspect та погоджений маршрут
+   від Brainstorm до створення проєкту. Базові й додаткові задачі розділяти
+   за фактичним планом; не повторювати вже створений skeleton.
+6. Визначити видачу результату: локальна папка, відкриття та за потреби
+   завантаження архіву; не включати секрети. Реалізувати й перевірити
+   погоджені мікроплани по одному.
+
+Приймання має включати реальний handoff без історії автора, читання
+references, продовження тієї самої сесії, відновлення після перезапуску
+й генерацію/збірку базового проєкту. Окремий UI не має копіювати стандарти
+Playbook як другу незалежну політику.
+
+## Milestone 3 — автоматизація execution та SDD у DevGuard
+
+Статус: майбутня фаза; деталізація після milestone 2.
+
+Підготувати окремі design і мікроплани керованого виконання планів:
+стан задач, evidence, baseline/snapshot lifecycle, implementer/reviewer
+координація, fix rounds, погодження, recovery і final review. Для review
+DevGuard реалізувати isolated immutable commit snapshots і реальні межі
+доступу; Markdown-інструкція не замінює sandbox. Зберегти можливість прямої
+роботи з Playbook поза DevGuard. Поточний окремий commit → QA → selected
+findings → developer handoff не підмінювати мовчки новим execution workflow.
+
+## Відкладено й не блокує milestone 2
+
+- П’ять зовнішніх Skills: using-git-worktrees, systematic-debugging,
+  verification-before-completion, requesting-code-review,
+  finishing-a-development-branch. FUTURE-SKILL маркери неактивні.
+- Visual Companion і окреме опрацювання writing-skills.
+- Подальша міграція решти AI Rules, Architectures, Architecture Discovery
+  та checklists; очищення цих джерел після окремої звірки.
+- Installer/plugin/discovery: поточний підхід — локальний репозиторій Playbook.
+
+Неперевірені варіанти Project Init (Security/MapStruct/devEnvironment),
+runtime із БД та Docker image build — окрема перевірка перед заявою про
+підтримку відповідних можливостей. Базова проба не доводить їхню готовність.
+
+## Докази й межі milestone 1
+
+Збережений звіт базової проби Project Init: Java 25, Maven package BUILD
+SUCCESS, Compose config і shell syntax пройшли. У фінальному проході
+генерацію або збірку повторно не запускати без нової причини.
+Execution/SDD пройшли ручне review й структурні перевірки; агентів для
+поведінкового прогону не запускали. Реальний інтеграційний handoff і
+відновлення runner залишаються прийманням milestone 2–3.
+Commit/push, cleanup DevGuard і продуктова реалізація до milestone 1 не входять.
+
+### Результат фінального проходу, 2026-10-28
+
+- Перевірено 35 MD у п’яти пакетах і трьох спільних policies: 105 локальних
+  посилань, файлові цілі та anchors чинні, code fences парні.
+- YAML frontmatter усіх п’яти Skills і git diff --check пройшли.
+- Ручною звіркою пройдено direct create, inspect, Brainstorm → Planning →
+  execution, окремо дозволений init, передачу правил виконавцю, незалежний
+  review, scoped fixes, ліміти/відновлення та завершення дозволеного етапу.
+  Це аналіз інструкцій, не запуск агентів або поведінковий eval.
+- Виправлено застарілий опис Project Init у Brainstorm, опис локального
+  inline execution у Writing Plans, межу окремо дозволеної ініціалізації
+  в new-project та залишкове посилання на General Rules у web-api.
+- Попередні незакомічені SDD правки, untracked Project Init references та
+  історичні записи збережено. Commit/push не виконано.
+- DevGuard не читався й не змінювався. Його документи, поточна архітектура
+  та фазові обмеження перевіряються на початку milestone 2.
+
+## Історичний журнал міграції до фінального проходу
+
+Нижче збережено попередній текст без втрати рішень і доказів. Його статуси,
+таблиці й «наступні кроки» описують стан на момент запису; актуальні scope,
+статуси й порядок роботи визначено вище. Зокрема, згадки про наявний General,
+відсутній Project Init або ще не проведений execution review застаріли.
+
 > Чинна схема документів після рішення користувача: design → plan → progress.
 > Roadmap і runtime нижче — історичні назви в описі міграції; вимогу
 > створювати їх скасовано. Актуальні правила — у Writing Plans,

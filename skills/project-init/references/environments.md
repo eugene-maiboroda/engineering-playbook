@@ -30,7 +30,7 @@ project/
 │   ├── docker-compose.yml       # prod, завжди
 │   ├── .env                     # локальний, без вбудованих секретів
 │   ├── .env.example
-│   └── dev/                     # лише features.devEnvironment=true
+│   └── dev/                     # лише features.devEnvironment=true; prod переноситься в prod/
 │       ├── docker-compose.yml
 │       ├── .env
 │       └── .env.example
@@ -41,6 +41,14 @@ project/
     ├── application-prod.properties
     └── application-dev.properties
 ```
+
+Якщо `features.devEnvironment=true`, створи симетричні
+`docker/prod/{docker-compose.yml,.env,.env.example}` і
+`docker/dev/{docker-compose.yml,.env,.env.example}`, як у WhatsApp Midwives.
+Prod-файли з дерева вище перенеси в `docker/prod`, не дублюй їх у `docker/`.
+Обидва Compose тоді мають `build.context: ../..`. У README, env paths,
+.gitignore та командах використовуй саме ці шляхи. Якщо опція false,
+залиш prod у `docker/`, без dev Compose.
 
 Завжди створюй усі три properties. Наявність dev profile не означає
 створення dev Compose або другої БД: їх додавай лише за обраної опції.
@@ -55,6 +63,7 @@ project/
 ```gitignore
 /docker/.env
 /docker/dev/.env
+/docker/prod/.env
 ```
 
 У `.dockerignore` виключи `.git`, `target`, IDE-файли та реальні env-файли.
@@ -193,6 +202,7 @@ volumes:
 Production `context: ..` рахується від docker/docker-compose.yml,
 а dev `context: ../..` — від docker/dev/docker-compose.yml; обидва
 вказують на корінь репозиторію.
+За layout `docker/prod` зміни prod context на `../..`.
 Обидва середовища використовують один Dockerfile.
 
 Профіль у reusable прикладі зафіксований у відповідному Compose, щоб dev
@@ -204,6 +214,12 @@ Production `context: ..` рахується від docker/docker-compose.yml,
 backend, але не перевіряє наявність schema чи завершення migrations.
 `$$` у healthcheck залишає `$` для shell усередині контейнера.
 
+У Compose передавай звичайні значення як `${VARIABLE}`, без `${VARIABLE:?…}`
+або `${VARIABLE?…}` і тексту `Set VARIABLE`. Для справді optional значень
+застосовуй `${FLAG:-true}` / `${FLAG:-false}` або `${VALUE:-}`; конкретний
+безпечний default визначає відповідна опція. Не додавай чужі dashboard,
+JWT чи інтеграційні поля з прикладу проєкту до базового skeleton.
+
 ## Environment Examples
 
 Передай FRONTEND_URL у backend environment та .env.example для кожного
@@ -214,7 +230,7 @@ backend, але не перевіряє наявність schema чи заве�
 також лише за security=true.
 
 
-`docker/.env.example`:
+`docker/.env.example` (або `docker/prod/.env.example` за Docker dev):
 
 ```dotenv
 FRONTEND_URL=https://frontend.example.com
@@ -287,6 +303,12 @@ spring.jpa.properties.hibernate.jdbc.time_zone=UTC
 spring.sql.init.mode=never
 ```
 
+Не додавай до нового skeleton `server.error.include-message`,
+`server.error.include-stacktrace` та `server.error.include-binding-errors`.
+Не замінюй їх механічно на явні default `spring.web.error.*`: для базового
+create ці три налаштування не потрібні. Безпечний HTTP error contract
+забезпечуй за [error-handling.md](error-handling.md).
+
 Спільні properties не дублюються між profiles. Application name, context path,
 datasource driver/dialect, SQL logging/formatting і proxy headers strategy
 розміщуються у common properties, якщо однакові в обох середовищах.
@@ -305,7 +327,7 @@ spring.datasource.password=${POSTGRES_PASSWORD}
 spring.jpa.hibernate.ddl-auto=validate
 ```
 
-`application-dev.properties`:
+`application-dev.properties` за `features.devEnvironment=true`:
 
 ```properties
 server.port=${API_PORT}
@@ -316,12 +338,36 @@ spring.datasource.password=${POSTGRES_PASSWORD}
 spring.jpa.hibernate.ddl-auto=validate
 ```
 
+За `features.devEnvironment=false` створи `application-dev.properties`
+саме для backend із IDE та окремої локальної PostgreSQL:
+
+```properties
+server.port=8080
+server.host=localhost
+
+spring.datasource.url=jdbc:postgresql://localhost:${POSTGRES_PORT}/${POSTGRES_DB}
+spring.datasource.username=${POSTGRES_USER}
+spring.datasource.password=${POSTGRES_PASSWORD}
+
+spring.jpa.hibernate.ddl-auto=validate
+```
+
+У цьому сценарії не використовуй `${API_PORT}`, `${API_HOST}` або
+`${POSTGRES_HOST}` у dev profile. POSTGRES_PORT — опублікований host port
+окремої локальної БД, наприклад 5441/5442/5443; користувач обирає вільний
+порт і запускає PostgreSQL сам, зокрема через Docker. Не запускай БД
+автоматично й не генеруй Docker dev без обраної опції. Передай DB credentials
+і FRONTEND_URL у Run Configuration IDE; Compose `.env` сам по собі Spring
+з IDE не завантажує. Не використовуй prod credentials чи prod env-file.
+`server.host` не є bind address. `server.address=0.0.0.0` додавай лише за
+потреби доступу з інших машин, не як обов’язкову властивість локального dev.
+
 Backend у контейнері використовує service DNS та внутрішній порт `5432`.
 `POSTGRES_PORT` потрібний лише для доступу з host; БД публікується на
 loopback. Dev і prod — два PostgreSQL services з окремими volumes, а не
 дві schema в одній спільній production database.
 
-Локальний IDE-запуск — додатковий режим, не заміна dev Compose. Запусти
+За `features.devEnvironment=true` локальний IDE-запуск — додатковий режим, не заміна dev Compose. Запусти
 тільки dev DB, передай dev credentials і явно перевизнач datasource URL
 через `SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5441/sample_dev`.
 Не змінюй container hostname у спільному dev profile заради IDE.
@@ -337,7 +383,8 @@ backend; для prod зміни schema потребують backup і плану
 
 ### API Port: Single Source of Truth
 
-Production API port береться з `docker/.env`.
+Production API port береться з `docker/.env` або `docker/prod/.env`,
+якщо обрано Docker dev. Приклад ланцюжка нижче показує перший layout.
 Наприклад:
 
 ```dotenv
@@ -378,7 +425,7 @@ Compose використовує те саме значення для публ�
 `AppProps` читає налаштований порт, а `AppRunner` використовує його
 разом із host і context path для Swagger URL.
 
-Не допускається незалежний hardcoded порт у profile:
+У container prod/dev profile не допускається незалежний hardcoded порт:
 
 ```properties
 server.port=8082
@@ -394,7 +441,9 @@ server.port=8082
 server.port=${API_PORT}
 ```
 
-Те саме правило діє для dev через `docker/dev/.env` та dev Compose.
+Те саме правило діє для Docker dev через `docker/dev/.env` та dev Compose.
+Для локального dev без Docker dev застосуй виняток вище: `server.port=8080`
+і `server.host=localhost`, незалежно від production API port.
 `server.port` керує портом сервера; `server.host` — custom metadata для URL,
 а не bind address. Приклади вище припускають однаковий host/container API port,
 як у стандартних Compose цього документа.
@@ -472,6 +521,12 @@ docker compose --env-file docker/.env -f docker/docker-compose.yml up -d --build
 docker compose --env-file docker/dev/.env -f docker/dev/docker-compose.yml config --quiet
 docker compose --env-file docker/dev/.env -f docker/dev/docker-compose.yml up -d --build
 ```
+
+За `features.devEnvironment=true` у двох prod-командах вище заміни
+`docker/.env` на `docker/prod/.env`, а `docker/docker-compose.yml` на
+`docker/prod/docker-compose.yml`; prod build context має бути `../..`.
+Без Docker dev не включай dev Compose-команди в README: опиши IDE backend
+на 8080 та ручну підготовку окремої локальної БД/Run Configuration.
 
 Це інструкції для запуску оператором, не автоматичний deployment під час
 редагування Playbook. `config --quiet` перевіряє Compose без друку секретів;

@@ -51,6 +51,9 @@ Skill. Працюй у наданому scope та збережи користу
   відповідальності компонентів, naming, Java Code Style.
 - Для configuration, typed properties, Clock та startup bootstrap прочитай
   [infrastructure.md](references/infrastructure.md).
+- Для create прочитай різницю локального dev і Docker dev у
+  [environments.md](references/environments.md) перед записом profiles:
+  features.devEnvironment визначає layout і значення dev profile.
 - Для Docker, dev/prod, назв ресурсів, properties і env-файлів прочитай
   [environments.md](references/environments.md).
 - Для базового security стандартного backend прочитай
