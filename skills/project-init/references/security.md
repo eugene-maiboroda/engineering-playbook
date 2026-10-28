@@ -2,7 +2,7 @@
 
 ## Створи основу
 
-Для нового стандартного backend додай `spring-boot-starter-security`.
+За features.security=true додай `spring-boot-starter-security`.
 Використовуй form login і серверну HTTP-сесію, без JWT, Bearer tokens,
 OAuth2/resource-server або власної таблиці користувачів.
 
@@ -85,7 +85,7 @@ AUTHENTICATION_REQUIRED, ACCESS_DENIED та INVALID_CREDENTIALS і безпеч�
 package com.example.security;
 
 import com.example.bootstrap.properties.AuthProps;
-import com.example.shared.api.web.ErrorResponseWriter;
+import com.example.shared.api.web.mappers.ErrorResponseWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;

@@ -3,7 +3,7 @@
 ## Відновлення
 
 Спочатку прочитай спільний
-[контракт журналу](../../executing-plans/references/execution-records.md).
+[контракт журналу (execution-records.md)](../../executing-plans/references/execution-records.md).
 Не re-dispatch завершені задачі за умови відповідності плану, snapshot і
 доказів. Для незавершеної задачі перевір agent status, останній report
 та лічильник fix rounds. Не запускай дубль, поки початковий агент ще

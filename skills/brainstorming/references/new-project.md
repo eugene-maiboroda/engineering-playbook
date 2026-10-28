@@ -36,7 +36,7 @@ Playbook використовуй для способу побудови, над
 До погодження концепції не створюй план виконання, skeleton, foundation
 або бізнес-код. Результат — погоджений design, достатній для переходу в Writing Plans.
 Project-init не замінює Writing Plans. Якщо користувач окремо доручив
-ініціалізацію, використовуй [`engineering-playbook:project-init`](../../project-init/SKILL.md):
+ініціалізацію, використовуй [`engineering-playbook:project-init` (project-init/SKILL.md)](../../project-init/SKILL.md):
 `create` — явний дозвіл створити skeleton агентом; `inspect` — перевірити
 вже створений користувачем проєкт. Сам Brainstorm не запускає генерацію
 без цього доручення. Якщо вибір неоднозначний, уточни сценарій.

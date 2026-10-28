@@ -114,7 +114,7 @@ review. Це явне спільне використання документі
 | finishing-a-development-branch | Завершення, вибір merge/PR/cleanup | Відкладено; неактивний маркер, без автоматичних Git mutations |
 | using-superpowers/references | Адаптація можливостей середовища | Зовнішній bootstrap не переноситься; можливості й дозволи визначає поточне середовище |
 
-Ці зовнішні Skills відкладені за рішенням користувача; не переходити до їхнього опрацювання. Відкладений scope: [загальний план](general-skills-migration.md). Незалежний Design Review Brainstorm і
+Ці зовнішні Skills відкладені за рішенням користувача; не переходити до їхнього опрацювання. Відкладений scope: [загальний план (general-skills-migration.md)](general-skills-migration.md). Незалежний Design Review Brainstorm і
 code review реалізації мають різні задачі й не підміняють одне одного.
 
 ## Перевірки та межі висновку
@@ -139,7 +139,7 @@ General SHA-256 незмінний:
 
 ## Уточнення scope — 2026-10-27
 
-Додано лише неактивні FUTURE-SKILL маркери для п’яти відкладених зовнішніх Skills в основних executing-plans і subagent-driven-development SKILL.md. Старий текст цих файлів збережено; всі створені prompts і references залишено без змін. Нічого не видалено й не вимкнено. Подальше розширення зупинено; опис ролей наявних MD і межа DevGuard — у [загальному плані](general-skills-migration.md). Обидва execution пакети й далі очікують користувацького review.
+Додано лише неактивні FUTURE-SKILL маркери для п’яти відкладених зовнішніх Skills в основних executing-plans і subagent-driven-development SKILL.md. Старий текст цих файлів збережено; всі створені prompts і references залишено без змін. Нічого не видалено й не вимкнено. Подальше розширення зупинено; опис ролей наявних MD і межа DevGuard — у [загальному плані (general-skills-migration.md)](general-skills-migration.md). Обидва execution пакети й далі очікують користувацького review.
 
 
 ## Що збережено

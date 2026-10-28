@@ -3,10 +3,10 @@
 Правила написання infrastructure-коду: configuration classes, bean wiring,
 bootstrap та typed `@ConfigurationProperties`. Налаштування значень у
 `application*.properties`, Docker Compose, `.env` і запуск prod/dev описані
-окремо в [Dev and Prod Environments](environments.md).
+окремо в [Dev and Prod Environments (environments.md)](environments.md).
 
 Застосовуй разом із погодженою архітектурою та
-[Java Code Style](project-conventions.md#agreed-java-code-style).
+[Java Code Style (project-conventions.md)](project-conventions.md#agreed-java-code-style).
 
 ## Configuration Organization
 
@@ -45,7 +45,7 @@ infrastructure/
     └── MessagingConfig.java
 ```
 
-Не створювати один великий configuration class, який конфігурує всі
+Не створюй один великий configuration class, який конфігурує всі
 підсистеми application.
 
 ---
@@ -151,7 +151,7 @@ security
 вона повинна мати власний properties object, якщо це виправдано її
 розміром та відповідальністю.
 
-Не створювати один глобальний properties class для всіх application
+Не створюй один глобальний properties class для всіх application
 settings.
 
 ---
@@ -162,7 +162,7 @@ settings.
 `AppRunner` використовує їх для startup Swagger URL. Не видаляй `server.host`
 як «unused Spring property»: це custom metadata для bootstrap.
 Значення портів, host і proxy configuration задаються в
-[Environments — API Port and Host](environments.md#api-port-and-host).
+[Environments — API Port and Host (environments.md)](environments.md#api-port-and-host).
 
 Приклад нижче показує прямий HTTP-доступ. За reverse proxy генерацію URL
 потрібно узгодити із зовнішніми scheme/host/port; не оголошуй внутрішню
@@ -177,7 +177,8 @@ Reference structure:
 
 ```text
 bootstrap/
-├── AppProps.java
+├── properties/
+│   └── AppProps.java
 └── AppRunner.java
 ```
 
@@ -188,16 +189,14 @@ bootstrap/
 Reference implementation:
 
 ```java
-package com.example.backend.bootstrap;
+package com.example.bootstrap.properties;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
 @Getter
 @Setter
-@Configuration
 @ConfigurationProperties(prefix = "server")
 public class AppProps {
 
@@ -231,8 +230,9 @@ server.servlet.context-path
 Reference implementation:
 
 ```java
-package com.example.backend.bootstrap;
+package com.example.bootstrap;
 
+import com.example.bootstrap.properties.AppProps;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -307,4 +307,4 @@ environment configuration. При зміні порту або context path не
 2. Повторно використай існуючі компоненти; не додавай дублюючі beans.
 3. Розділяй configuration за відповідальністю, без business logic у wiring.
 4. Перевір binding properties, створення beans та коректність startup URL.
-5. Дотримуйся [Testing Policy](../../../ai-rules/testing-policy.md).
+5. Дотримуйся [Testing Policy (testing-policy.md)](../../../ai-rules/testing-policy.md).

@@ -33,7 +33,7 @@ bootstrap/         точка запуску пайплайну: CommandLineRunn
 
 `api/internal`, `api/web` та спільний `api/dto` описують організацію
 вхідних контрактів **feature-oriented модуля**; повне дерево — у
-[модульному моноліті](modular-monolith.md#структура-одного-модуля).
+[модульному моноліті (modular-monolith.md)](modular-monolith.md#структура-одного-модуля).
 Модульні межі та hexagonal isolation можуть співіснувати: web controller
 є inbound adapter, Java API capability — вхідним контрактом, а реалізація
 сценарію залишається в application. Не створюй дублюючі `FeatureApi` та
@@ -189,7 +189,7 @@ steps.export-authors.enabled=false
 ## Тестування
 
 За замовчуванням нові тести не пишуться. Застосовується
-[Testing Policy](../ai-rules/general.md#testing-policy): тільки за явним
+[Testing Policy (general.md)](../ai-rules/testing-policy.md): тільки за явним
 запитом користувача, тільки для найкритичнішої бізнес-логіки та не більше
 20 автоматизованих тестових сценаріїв загалом на проєкт, включно з наявними.
 
@@ -296,7 +296,7 @@ rollback/compensating-дія) чи збій *між* операціями (по�
 Тести додаються тільки за явним запитом користувача для найкритичнішої
 бізнес-логіки. Загальний ліміт — 20 автоматизованих тестових сценаріїв
 на весь проєкт, включно з наявними, відповідно до
-[Testing Policy](../ai-rules/general.md#testing-policy).
+[Testing Policy (general.md)](../ai-rules/testing-policy.md).
 
 [[springboottest-triggers-pipeline]] Якщо entrypoint — `CommandLineRunner`
 або інший компонент, який стартує роботу при піднятті контексту,

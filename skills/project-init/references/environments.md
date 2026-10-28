@@ -3,14 +3,16 @@
 Стандарт окремих середовищ для backend-проєктів на основі WhatsApp Midwives.
 Налаштування середовищ: `application*.properties`, Docker Compose, `.env`,
 Dockerfile та запуск prod/dev. Код configuration classes, bean wiring,
-bootstrap і typed properties описано в [Infrastructure](infrastructure.md).
+bootstrap і typed properties описано в [Infrastructure (infrastructure.md)](infrastructure.md).
 Застосовуй, якщо проєкт не має іншого явно погодженого стандарту.
 
 ## Core Rule
 
-Спочатку реалізуй prod foundation, потім dev за тією самою структурою.
-Обидва середовища запускають backend та власну БД через Docker Compose.
-Якщо наявний prod організовано інакше, підготуй його перенесення разом із dev,
+Створи prod foundation. Docker dev додавай лише за features.devEnvironment=true;
+усі три application*.properties створюй незалежно від цієї опції.
+Production завжди містить backend і PostgreSQL через Docker Compose.
+Окреме Docker dev з backend і власною БД додавай лише за запитом.
+Якщо доручено зміну наявного prod або додавання dev, підготуй лише погоджене перенесення,
 зберігаючи дані, ідентичність Docker resources та погоджені runtime contracts.
 Зміна production deployment виконується окремо після перевірки конфігурації.
 
@@ -25,19 +27,25 @@ project/
 ├── Dockerfile
 ├── .dockerignore
 ├── docker/
-│   ├── prod/
-│   │   ├── docker-compose.yml
-│   │   ├── .env
-│   │   └── .env.example
-│   └── dev/
+│   ├── docker-compose.yml       # prod, завжди
+│   ├── .env                     # локальний, без вбудованих секретів
+│   ├── .env.example
+│   └── dev/                     # лише features.devEnvironment=true
 │       ├── docker-compose.yml
 │       ├── .env
 │       └── .env.example
+├── sql/
+│   └── sql-init.sql
 └── src/main/resources/
     ├── application.properties
     ├── application-prod.properties
     └── application-dev.properties
 ```
+
+Завжди створюй усі три properties. Наявність dev profile не означає
+створення dev Compose або другої БД: їх додавай лише за обраної опції.
+За відсутності Docker dev запуск dev profile потребує явно заданої
+локальної БД; не підставляй production credentials як fallback.
 
 Реальні `.env` локальні та ignored; `.env.example` містять лише безпечні
 приклади та зберігаються в Git як перелік потрібних змінних.
@@ -45,7 +53,7 @@ project/
 до reusable стандарту, а не копія його секретів.
 
 ```gitignore
-/docker/prod/.env
+/docker/.env
 /docker/dev/.env
 ```
 
@@ -74,7 +82,7 @@ names, mount paths, порти та branch/checkout. Не перейменову
 `sample` — placeholder назви проєкту, не готовий service name для копіювання.
 Обидва файли самодостатні; prod не є base-файлом для dev overrides.
 
-### docker/prod/docker-compose.yml
+### docker/docker-compose.yml
 
 ```yaml
 name: sample-prod
@@ -85,11 +93,12 @@ networks:
 services:
   sample-backend-prod:
     build:
-      context: ../..
+      context: ..
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: prod
+      FRONTEND_URL: ${FRONTEND_URL}
       API_HOST: ${API_HOST}
       API_PORT: ${API_PORT}
       POSTGRES_DB: ${POSTGRES_DB}
@@ -143,6 +152,7 @@ services:
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: dev
+      FRONTEND_URL: ${FRONTEND_URL}
       API_HOST: ${API_HOST}
       API_PORT: ${API_PORT}
       POSTGRES_DB: ${POSTGRES_DB}
@@ -180,8 +190,9 @@ volumes:
   sample-postgres-dev-data:
 ```
 
-`context: ../..` рахується від `docker/<environment>/docker-compose.yml` і
-вказує на корінь репозиторію. `dockerfile: Dockerfile` — від build context.
+Production `context: ..` рахується від docker/docker-compose.yml,
+а dev `context: ../..` — від docker/dev/docker-compose.yml; обидва
+вказують на корінь репозиторію.
 Обидва середовища використовують один Dockerfile.
 
 Профіль у reusable прикладі зафіксований у відповідному Compose, щоб dev
@@ -195,9 +206,18 @@ backend, але не перевіряє наявність schema чи заве�
 
 ## Environment Examples
 
-`docker/prod/.env.example`:
+Передай FRONTEND_URL у backend environment та .env.example для кожного
+обраного Docker-середовища за [cors.md](cors.md). Лише за security=true
+додай APP_ADMIN_USERNAME і APP_ADMIN_PASSWORD_HASH до backend environment
+і .env.example; значення hash передавай буквально за правилами нижче.
+Без security ці поля не додавай. У application.properties auth.* додавай
+також лише за security=true.
+
+
+`docker/.env.example`:
 
 ```dotenv
+FRONTEND_URL=https://frontend.example.com
 API_HOST=api.example.com
 API_PORT=12199
 POSTGRES_PORT=5440
@@ -209,12 +229,38 @@ POSTGRES_PASSWORD=replace-with-unique-prod-password
 `docker/dev/.env.example`:
 
 ```dotenv
+FRONTEND_URL=http://localhost:3000
 API_HOST=localhost
 API_PORT=12200
 POSTGRES_PORT=5441
 POSTGRES_DB=sample_dev
 POSTGRES_USER=sample_dev
 POSTGRES_PASSWORD=replace-with-unique-dev-password
+```
+
+Лише за features.security=true додай до `environment` backend у
+`docker/docker-compose.yml` та, якщо створено, `docker/dev/docker-compose.yml`:
+
+```yaml
+      APP_ADMIN_USERNAME: ${APP_ADMIN_USERNAME}
+      APP_ADMIN_PASSWORD_HASH: ${APP_ADMIN_PASSWORD_HASH}
+```
+
+У відповідні `.env.example` додай:
+
+```dotenv
+APP_ADMIN_USERNAME=replace-with-admin-username
+APP_ADMIN_PASSWORD_HASH='replace-with-bcrypt-hash'
+```
+
+Placeholder не є валідним BCrypt hash. Перед реальним запуском користувач
+задає окремі значення для середовищ. Зберігай BCrypt `$` буквально,
+не виконуй повторну interpolation через копіювання hash у Compose YAML.
+У `application.properties` лише за цієї опції додай:
+
+```properties
+app.auth.username=${APP_ADMIN_USERNAME}
+app.auth.password-hash=${APP_ADMIN_PASSWORD_HASH}
 ```
 
 Порти наведено за розділенням у reference, а не як глобально обов'язкові числа.
@@ -244,8 +290,9 @@ spring.sql.init.mode=never
 Спільні properties не дублюються між profiles. Application name, context path,
 datasource driver/dialect, SQL logging/formatting і proxy headers strategy
 розміщуються у common properties, якщо однакові в обох середовищах.
-Значення адаптуються до фактичного проєкту. У reference `spring.profiles.default=dev`; це допустимий
-local default, але deployment завжди явно задає свій profile.
+Значення адаптуй до фактичного проєкту. Production Compose явно задає
+SPRING_PROFILES_ACTIVE=prod. Dev profile використовуй для IDE/локальної
+БД або optional Docker dev; не запускай його з production credentials.
 
 `application-prod.properties`:
 
@@ -290,7 +337,7 @@ backend; для prod зміни schema потребують backup і плану
 
 ### API Port: Single Source of Truth
 
-Production API port береться з `docker/prod/.env`.
+Production API port береться з `docker/.env`.
 Наприклад:
 
 ```dotenv
@@ -300,12 +347,12 @@ API_PORT=8082
 Повний ланцюжок передачі значення:
 
 ```text
-docker/prod/.env
+docker/.env
  │
  └── API_PORT=8082
        │
        ▼
-docker/prod/docker-compose.yml
+docker/docker-compose.yml
        │
        ├── ports: ${API_PORT}:${API_PORT}
        │
@@ -354,7 +401,7 @@ server.port=${API_PORT}
 
 За reverse proxy узгодь зовнішні scheme/host/port та forwarded headers
 strategy з deployment. Код читання цих properties і startup URL описано
-в [Infrastructure — Startup URL Contract](infrastructure.md#startup-url-contract).
+в [Infrastructure — Startup URL Contract (infrastructure.md)](infrastructure.md#startup-url-contract).
 
 ## Integrations and External Effects
 
@@ -420,8 +467,8 @@ deployment host, не копіюй `linux/amd64` механічно. При зм
 Команди з кореня репозиторію; завжди явно задавай env-file та Compose file:
 
 ```bash
-docker compose --env-file docker/prod/.env -f docker/prod/docker-compose.yml config --quiet
-docker compose --env-file docker/prod/.env -f docker/prod/docker-compose.yml up -d --build
+docker compose --env-file docker/.env -f docker/docker-compose.yml config --quiet
+docker compose --env-file docker/.env -f docker/docker-compose.yml up -d --build
 docker compose --env-file docker/dev/.env -f docker/dev/docker-compose.yml config --quiet
 docker compose --env-file docker/dev/.env -f docker/dev/docker-compose.yml up -d --build
 ```
@@ -452,10 +499,10 @@ resources як спосіб «полагодити» deployment. Якщо іст
 6. Перевір Compose без друку секретів, env/profile consistency та ізоляцію БД.
 7. Перевір потрібні schema, health і зовнішні ефекти до ввімкнення інтеграцій.
 8. Після дозволеного deployment перевір health/logs обох середовищ.
-   Перевірку configuration-коду виконуй за [Infrastructure](infrastructure.md).
+   Перевірку configuration-коду виконуй за [Infrastructure (infrastructure.md)](infrastructure.md).
 9. Після рефакторингу повтори доречні build/static та runtime checks.
    Infrastructure/CI не є підставою додавати тести: застосовуй
-   [Testing Policy](../../../ai-rules/testing-policy.md).
+   [Testing Policy (testing-policy.md)](../../../ai-rules/testing-policy.md).
 
 ## References
 

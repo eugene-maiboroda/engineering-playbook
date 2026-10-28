@@ -1,7 +1,7 @@
 # Error Handling
 
 Цей документ визначає спільний стандарт обробки HTTP-помилок для Spring MVC
-проєктів. Приклади універсальні: package `com.example.backend` замінюється
+проєктів. Приклади універсальні: package `com.example` замінюється
 на package конкретного проєкту, а бізнес-помилки належать відповідним модулям.
 
 ## Rule
@@ -76,7 +76,7 @@ Naming `exception`/`exceptions` та responses/responds адаптується �
 ## ErrorResponse.java
 
 ```java
-package com.example.backend.shared.api.web.responses;
+package com.example.shared.api.web.responses;
 
 public record ErrorResponse(
 
@@ -95,7 +95,7 @@ public record ErrorResponse(
 ## ErrorDetailsResponse.java
 
 ```java
-package com.example.backend.shared.api.web.responses;
+package com.example.shared.api.web.responses;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -140,10 +140,10 @@ Reference implementation використовує Spring Framework 6+ API.
 додаються за реальною потребою, як показано нижче.
 
 ```java
-package com.example.backend.shared.api.web.controllers;
+package com.example.shared.api.web.controllers;
 
-import com.example.backend.shared.api.web.responses.ErrorResponse;
-import com.example.backend.shared.api.web.responses.ErrorDetailsResponse;
+import com.example.shared.api.web.responses.ErrorResponse;
+import com.example.shared.api.web.responses.ErrorDetailsResponse;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -291,7 +291,7 @@ DAO handlers потрібні лише в проєктах, де такі except
 Наприклад, модуль може публікувати такий application exception:
 
 ```java
-package com.example.backend.document.api.internal.exception;
+package com.example.document.api.internal.exception;
 
 public class DocumentNotFoundException extends RuntimeException {
 
@@ -325,9 +325,9 @@ public ResponseEntity<ErrorResponse> handleDocumentNotFound(
 до фактичних dependencies. Версії не змінюються заради цього прикладу.
 
 ```java
-package com.example.backend.shared.api.web.mappers;
+package com.example.shared.api.web.mappers;
 
-import com.example.backend.shared.api.web.responses.ErrorResponse;
+import com.example.shared.api.web.responses.ErrorResponse;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -374,6 +374,9 @@ JSON для помилок після початку streaming response.
 
 ## Spring Security Integration
 
+Цей фрагмент застосовуй лише за features.security=true. Без цієї опції
+не додавай Security imports або класи до базового error handling.
+
 Фрагмент налаштування наявного `SecurityFilterChain`:
 
 ```java
@@ -406,7 +409,7 @@ http.exceptionHandling(exceptions -> exceptions
 3. Визнач реальні бізнес-помилки й погоджений HTTP-мапінг.
 4. Використовуй існуючу структуру та явні типи, без `var` і зайвих абстракцій.
 5. Перевір безпечність повідомлень, HTTP statuses, headers та єдність JSON.
-6. Не додавай тести автоматично: діє [Testing Policy](../../../ai-rules/testing-policy.md).
+6. Не додавай тести автоматично: діє [Testing Policy (testing-policy.md)](../../../ai-rules/testing-policy.md).
 
 ## References
 

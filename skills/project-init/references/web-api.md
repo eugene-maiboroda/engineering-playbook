@@ -3,7 +3,7 @@
 Правила HTTP-відповідей на межі backend і frontend. Застосовуються незалежно
 від архітектури проєкту. DTO та enum належать фічі-власнику; контролер
 формує HTTP-контракт, а бізнес-правила залишаються в application/domain.
-Формат помилок описано окремо в [Error Handling](error-handling.md).
+Формат помилок описано окремо в [Error Handling (error-handling.md)](error-handling.md).
 
 ## Розташування контрактів
 
@@ -15,7 +15,7 @@
 спільний контрактний status enum може належати `api/dto`.
 Не дублюй DTO лише заради двох входів і не експортуй HTTP-specific DTO
 як міжфічевий контракт. Правила вибору та повне дерево:
-[Структура одного модуля](../../../architectures/modular-monolith.md#структура-одного-модуля).
+[Структура одного модуля (modular-monolith.md)](../../../architectures/modular-monolith.md#структура-одного-модуля).
 
 ## Available Actions
 
@@ -106,7 +106,7 @@ return ResponseEntity.ok().body(new PagedModel<>(users));
 
 Цей варіант не є вимогою переносити HTTP DTO в business/domain.
 Якщо сервіс повертає внутрішню модель результату, мапінг залишається
-на web-межі, відповідно до [Domain First](project-conventions.md#2-domain-first):
+на web-межі, відповідно до [Domain First (project-conventions.md)](project-conventions.md#2-domain-first):
 
 ```java
 Page<UserSummary> users = userService.findUsers(page, size);
@@ -167,7 +167,7 @@ Spring Data `PagedModel` доступний із версії 3.3. Для ста
 3. Повторно використай перевірки фічі; не перенось бізнес-правила в controller.
 4. Перевір DTO, metadata, права доступу, сортування та межі page/size.
 5. Зміни наявного публічного контракту погоджуй відповідно до General Rules.
-   Тести автоматично не додавай: діє [Testing Policy](../../../ai-rules/testing-policy.md).
+   Тести автоматично не додавай: діє [Testing Policy (testing-policy.md)](../../../ai-rules/testing-policy.md).
 
 ## Reference
 

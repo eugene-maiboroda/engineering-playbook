@@ -15,7 +15,13 @@
   "javaVersion": 25,
   "buildTool": "maven",
   "packaging": "jar",
-  "configurationFormat": "properties"
+  "configurationFormat": "properties",
+  "frontendUrl": "http://localhost:3000",
+  "features": {
+    "devEnvironment": false,
+    "security": false,
+    "mapstruct": false
+  }
 }
 ```
 
@@ -71,3 +77,13 @@ Java 25, Maven, jar, properties. Базові dependencies і правила в�
 версії та кінцевий шлях перед записом. Працюй лише в дозволеному scope;
 не перезаписуй непорожню папку. У JSON не приймай секрети або довільні
 shell-команди. Після перевірки поверни обчислені параметри в Project Init.
+
+## Оброби вибір можливостей
+
+features містить тільки три optional boolean-поля: devEnvironment, security,
+mapstruct. Відсутнє поле означає “ще не обрано”, а не мовчазне true/false.
+Уточни невідомі опції одним питанням за skeleton-standard.md. Обов’язкові
+складові не передавай як вимикачі. FRONTEND_URL у прикладі не є універсальним
+значенням: використай переданий frontendUrl або уточни адресу клієнта.
+Збережи обрані опції в progress; не запитуй повторно в межах тієї самої роботи.
+DevGuard UI/runner цим JSON не реалізуються; приймай і явну текстову відповідь.

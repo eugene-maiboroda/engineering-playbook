@@ -6,7 +6,7 @@
 
 ## 1. Security Policy for LLM Coding Agents
 
-Джерело: [01-security-llm-coding-agents](</Users/eugene/Downloads/01-security-llm-coding-agents (1).md>), 318 рядків.
+Джерело: [01-security-llm-coding-agents (01-security-llm-coding-agents (1)](</Users/eugene/Downloads/01-security-llm-coding-agents (1).md>), 318 рядків.
 
 **Про що документ.** Агент може не лише запропонувати код, а й прочитати
 файли, виконати команду та звернутися до системи. Тому безпека залежить
@@ -69,7 +69,7 @@
 
 ## 2. Small Projects: Project Bootstrap MCP Server
 
-Джерело: [02-small-projects-bootstrap-mcp](</Users/eugene/Downloads/02-small-projects-bootstrap-mcp (1).md>), 294 рядки.
+Джерело: [02-small-projects-bootstrap-mcp (02-small-projects-bootstrap-mcp (1)](</Users/eugene/Downloads/02-small-projects-bootstrap-mcp (1).md>), 294 рядки.
 
 **Про що документ.** Це специфікація **ще не реалізованого** MCP-сервера,
 який видаватиме агенту рецепти початкового налаштування Python/Java
@@ -131,7 +131,7 @@ VictoriaMetrics, Grafana, hooks і нові MCP не потрібні кожно
 
 ## 3. Long Projects: Recipes for Effective LLM-Assisted Development
 
-Джерело: [03-long-projects-recipes](</Users/eugene/Downloads/03-long-projects-recipes (1).md>), 249 рядків.
+Джерело: [03-long-projects-recipes (03-long-projects-recipes (1)](</Users/eugene/Downloads/03-long-projects-recipes (1).md>), 249 рядків.
 
 **Про що документ.** Набір робочих рецептів для тривалих проєктів:
 як дати агенту потрібний контекст, перевіряти зміни й підтримувати

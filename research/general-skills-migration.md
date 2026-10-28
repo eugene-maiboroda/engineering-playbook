@@ -12,7 +12,7 @@
 > статус «очищення не розпочато» та описи правил, що лишилися тільки
 > в General, є історичним станом і більше не визначають цей scope.
 > Актуальна посекційна звірка, джерело й відмінності:
-> [General: перевірка збереження правил](general-preservation-audit.md).
+> [General: перевірка збереження правил (general-preservation-audit.md)](general-preservation-audit.md).
 > Execution drafts усе ще очікують review; Project-init не створювався.
 
 Створено: 2026-10-23. Актуалізовано: 2026-10-27.
@@ -26,10 +26,10 @@
 
 | Пакет | Версія | Фактичний стан |
 | --- | --- | --- |
-| [brainstorming](../skills/brainstorming/SKILL.md) | 0.2.1 | Секції погоджено; зібрано з адаптаціями, етап закрито користувачем |
-| [writing-plans](../skills/writing-plans/SKILL.md) | 0.1.1 | Секції й metadata погоджено; зібрано за дорученням користувача |
-| [executing-plans](../skills/executing-plans/SKILL.md) | 0.1.0-draft | Підготовлено самостійно за дорученням користувача; очікує review, не позначати погодженим |
-| [subagent-driven-development](../skills/subagent-driven-development/SKILL.md) | 0.1.0-draft | Підготовлено з role prompts і references; очікує review, не позначати погодженим |
+| [brainstorming (brainstorming/SKILL.md)](../skills/brainstorming/SKILL.md) | 0.2.1 | Секції погоджено; зібрано з адаптаціями, етап закрито користувачем |
+| [writing-plans (writing-plans/SKILL.md)](../skills/writing-plans/SKILL.md) | 0.1.1 | Секції й metadata погоджено; зібрано за дорученням користувача |
+| [executing-plans (executing-plans/SKILL.md)](../skills/executing-plans/SKILL.md) | 0.1.0-draft | Підготовлено самостійно за дорученням користувача; очікує review, не позначати погодженим |
+| [subagent-driven-development (subagent-driven-development/SKILL.md)](../skills/subagent-driven-development/SKILL.md) | 0.1.0-draft | Підготовлено з role prompts і references; очікує review, не позначати погодженим |
 
 **Поточна робота — перевірити й відшліфувати цей набір**, насамперед два
 execution-пакети та їхні внутрішні MD. Не розширювати бібліотеку через
@@ -209,9 +209,9 @@ eval. Агентів для тестового виконання планів �
 
 ## Актуальні матеріали
 
-- [Brainstorm — погоджений пакет](../skills/brainstorming/SKILL.md).
-- [Writing Plans — погоджений пакет](../skills/writing-plans/SKILL.md).
-- [Execution Skills: структура, адаптації, ролі внутрішніх MD і scope review](execution-skills-review.md).
+- [Brainstorm — погоджений пакет (brainstorming/SKILL.md)](../skills/brainstorming/SKILL.md).
+- [Writing Plans — погоджений пакет (writing-plans/SKILL.md)](../skills/writing-plans/SKILL.md).
+- [Execution Skills: структура, адаптації, ролі внутрішніх MD і scope review (execution-skills-review.md)](execution-skills-review.md).
 
 Тимчасові журнали посекційних погоджень прибрано 2026-10-27 за дорученням
 користувача після перенесення результату в Skills. Підготовка двох execution
@@ -333,9 +333,9 @@ GitHub identity не замінює локальний шлях. Наявний 
 | --- | --- | --- |
 | [general-preservation-audit.md](general-preservation-audit.md) | Карта збереження початкового General та погоджених змін | Аудит виконано, це доказова карта, не Skill |
 | [implementation-rules.md](../skills/executing-plans/references/implementation-rules.md) | Спільні before/implementation/reuse/unexpected rules обох execution режимів | Перенесений зміст, потрібен review у складі execution |
-| [project-agent-instructions.md](../ai-rules/references/project-agent-instructions.md) | AGENTS.md, збереження коренів, читання references, перехід старих документів | Підготовлено за погодженими рішеннями, потрібен перегляд тексту |
-| [project-initialization.md](../ai-rules/references/project-initialization.md) | Збереження ручного сценарію й checklist skeleton з General | Reference, не реалізований Project-init Skill чи генератор |
-| [project-progress.md](../ai-rules/references/project-progress.md) | Контракт єдиного журналу проєкту для інших чатів | Підготовлено за прямим рішенням користувача, потрібен перегляд тексту |
+| [project-agent-instructions.md](../ai-rules/project-agent-instructions.md) | AGENTS.md, збереження коренів, читання references, перехід старих документів | Підготовлено за погодженими рішеннями, потрібен перегляд тексту |
+| [inspect-project.md](../skills/project-init/references/inspect-project.md) | Збереження ручного сценарію й checklist skeleton з General | Reference, не реалізований Project-init Skill чи генератор |
+| [project-progress.md](../ai-rules/project-progress.md) | Контракт єдиного журналу проєкту для інших чатів | Підготовлено за прямим рішенням користувача, потрібен перегляд тексту |
 | [testing-policy.md](../ai-rules/testing-policy.md) | Єдине повне джерело політики тестів | Дослівно перенесено з General; звірити доступність із усіх процесів |
 
 Ці шість файлів не означають появу шести нових Skills або запуск
@@ -427,3 +427,38 @@ Create Project — можливий UI, не реалізований у DevGuar
 Оновлено Project Init, input-contract, старий checklist і входи з
 Brainstorm/Writing Plans. Унікальні налаштування наявного проєкту
 зберігаються; defaults не застосовуються до них автоматично.
+
+### Project Init: погоджений стандарт і опції
+
+Обов’язковий склад зафіксовано в skeleton-standard.md. MapStruct і
+Security вилучено з defaults; optional devEnvironment додає окремий
+docker/dev, базовий prod тепер docker/docker-compose.yml і docker/.env.
+Усі три application*.properties залишаються завжди. SQL ведеться вручну:
+sql/sql-init.sql актуальний, окремі migration scripts для чинної БД;
+після застосування користувач видаляє migration script. Flyway не додається.
+CORS відтворено з Family Menu (прочитано лише CorsConfig), без читання
+секретів. Вибір опцій передається JSON або одним питанням; повторно
+погоджений вибір не запитується. UI DevGuard не реалізований.
+
+### Звірка Project Init: environments і inspect
+
+Додано конкретні optional APP_ADMIN_* Compose mappings, env examples та
+properties; FRONTEND_URL присутній у базових прикладах. Inspect checklist
+перенесено до skills/project-init/references/inspect-project.md, вхідні
+посилання оновлено. У прикладах уніфіковано root package com.example,
+import security writer відповідає error-handling reference. AppProps
+реєструється через ConfigurationPropertiesScan без дублюючого Configuration.
+Генерація повного проєкту й Maven-збірка цим проходом не виконувалися.
+
+### Project Init — базовий етап закрито, 2026-10-28
+
+За дорученням користувача виправлено три зауваження незалежної проби:
+AppProps у bootstrap/properties, AppRunner у bootstrap з правильним import;
+Docker dev лише за опцією; Project Init прямо направляє до інструкції
+створення AGENTS.md. Базову генерацію незалежним агентом перевірено в
+/tmp/devguard-init-trial-20261027/inittrial-backend: Java 25, Maven package
+BUILD SUCCESS, Compose config --quiet і shell syntax wrapper пройшли.
+Нових тестів немає. Runtime із БД, Docker image build і варіанти
+Security/MapStruct/devEnvironment не перевірені. Інтеграція DevGuard
+лишається окремою роботою. Наступний крок — користувацький review
+Executing Plans, потім Subagent-Driven Development і спільна звірка.

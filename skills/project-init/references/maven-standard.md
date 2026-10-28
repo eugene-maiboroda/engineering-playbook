@@ -24,7 +24,7 @@ ArtifactId записуй у lowercase kebab-case. Для прикладу famil
 потреби в явному override. Це відповідає прикладу користувача, де starters
 і PostgreSQL driver не мають власного version.
 
-Початкова база з наданих матеріалів:
+Початкова база з наданих матеріалів (MapStruct і binding — лише для опції):
 
 | Компонент | Значення | Дія |
 | --- | --- | --- |
@@ -54,7 +54,6 @@ ArtifactId записуй у lowercase kebab-case. Для прикладу famil
 | org.projectlombok | lombok | optional=true |
 | org.springdoc | springdoc-openapi-starter-webmvc-ui | version=${springdoc.version} |
 | org.postgresql | postgresql | scope=runtime |
-| org.mapstruct | mapstruct | version=${mapstruct.version} |
 | org.springframework.boot | spring-boot-starter-actuator-test | scope=test, прямо запитано користувачем |
 
 Тестова dependency не дозволяє створювати нові тестові сценарії без запиту.
@@ -63,8 +62,8 @@ ArtifactId записуй у lowercase kebab-case. Для прикладу famil
 окрему бібліотеку лише заради цієї анотації. Перевір транзитивне стандартне
 логування Spring Boot перед додаванням іншого logging backend.
 
-Додай spring-boot-starter-security за замовчуванням і застосуй
-[security.md](security.md). Не додавай OAuth2/resource-server, токени, Spring AI,
+Додавай spring-boot-starter-security лише за features.security=true,
+тоді застосуй [security.md](security.md). Не додавай OAuth2/resource-server, токени, Spring AI,
 Stripe, Gson, Jsoup, CSV/IO або їхні version properties лише тому, що вони
 присутні в наданому POM. Додавай їх лише за конкретною потребою й запитом.
 BOM імпортуй лише для реально використаної групи dependencies.
@@ -72,10 +71,12 @@ BOM імпортуй лише для реально використаної г�
 ## Налаштуй build
 
 Додай spring-boot-maven-plugin. Для maven-compiler-plugin явно налаштуй
-annotationProcessorPaths: Lombok, mapstruct-processor і
-lombok-mapstruct-binding. Використай properties для їхніх версій;
-узгодь Lombok dependency й processor, MapStruct dependency й processor.
-Якщо в тестах пізніше потрібні processors, налаштуй їх явно й послідовно.
+Lombok annotationProcessorPaths. За замовчуванням використовуй ручний
+mapping: MapStruct library, processor і binding та їхні properties не додавай.
+Лише за features.mapstruct=true додай org.mapstruct:mapstruct,
+mapstruct-processor і lombok-mapstruct-binding із properties для версій.
+Узгодь версії library/processor. Якщо в тестах потрібні processors,
+налаштуй їх явно й послідовно.
 
 Не копіюй із прикладу виключення RepeatBookingTest або інші workaround-и
 конкретного проєкту. Surefire javaagent для Mockito додавай лише коли

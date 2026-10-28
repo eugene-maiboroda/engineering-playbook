@@ -16,7 +16,7 @@ Connection version: 1
 Project root: <абсолютний корінь проєкту>
 Playbook root: <абсолютний корінь Playbook>
 Progress: <абсолютний шлях спільного progress проєкту>
-Progress policy: читати перед роботою; оновлювати після кожної задачі/зміни для іншого чату; <Playbook root>/ai-rules/references/project-progress.md
+Progress policy: читати перед роботою; оновлювати після кожної задачі/зміни для іншого чату; <Playbook root>/ai-rules/project-progress.md
 Testing policy: нові тести лише за явним запитом; перед рішеннями про тести читати <Playbook root>/ai-rules/testing-policy.md
 Git policy: commit/push виконує користувач
 Approval policy: реалізація після погодження потрібного плану; суттєві відхилення погоджуються
@@ -72,7 +72,7 @@ Access policy: дотримуйся дозволів на інструменти
 Збережи в локальному AGENTS.md абсолютні `Project root`, `Playbook root`
 і `Progress`. Використай корені запуску; за відсутності Playbook root
 визнач його з фактичного розташування цього файла:
-`<Playbook root>/ai-rules/references/project-agent-instructions.md`.
+`<Playbook root>/ai-rules/project-agent-instructions.md`.
 Не вгадуй локальний шлях за GitHub name і не записуй шлях машини як
 універсальну константу у спільні інструкції або Skills.
 

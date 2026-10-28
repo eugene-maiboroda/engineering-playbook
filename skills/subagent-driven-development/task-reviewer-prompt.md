@@ -1,7 +1,7 @@
 # Task Review — відповідність вимогам і якість
 
 Передай reviewer конкретний незмінний snapshot за
-[спільним контрактом](../executing-plans/references/review-snapshots.md).
+[спільним контрактом (review-snapshots.md)](../executing-plans/references/review-snapshots.md).
 Review цього шаблону read-only: ні тести, ні записи, ні Git mutations.
 
 ```text
@@ -37,7 +37,7 @@ coverage/відсутність нових tests або стиль як само
 Не знижуй severity лише через виправдання виконавця або мовчання spec.
 Дефект, прямо заданий планом, також назви й поясни суперечність.
 
-Кожен finding повинен мати точні file:line зі snapshot, передумови,
+Для кожного finding вкажи точні file:line зі snapshot, передумови,
 що неправильно, наслідок і рекомендацію. Не вигадуй evidence;
 коли його недостатньо, окремо назви limitation.
 Severity: Critical — критичний вплив; Important — дефект/пропущена

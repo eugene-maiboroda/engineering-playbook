@@ -26,30 +26,30 @@
 
 | Початкова секція | Поточне джерело | Результат |
 | --- | --- | --- |
-| Project Initialization: область застосування | [init reference](../ai-rules/references/project-initialization.md) | Новий програмний проєкт, ручний skeleton; не універсальний етап усіх задач |
-| 1. Study Project Context | [init reference](../ai-rules/references/project-initialization.md#контекст-технічний-аналіз-і-обговорення) | Збережено матеріали, роль Playbook і документації, architectures, conventions, infrastructure, environments, principles, decisions та HTTP API правила; читання релевантне задачі й дозволам |
+| Project Initialization: область застосування | [init reference (inspect-project.md)](../skills/project-init/references/inspect-project.md) | Новий програмний проєкт, ручний skeleton; не універсальний етап усіх задач |
+| 1. Study Project Context | [init reference (inspect-project.md)](../skills/project-init/references/inspect-project.md) | Збережено матеріали, роль Playbook і документації, architectures, conventions, infrastructure, environments, principles, decisions та HTTP API правила; читання релевантне задачі й дозволам |
 | 2. Initial Technical Analysis | той самий reference | Збережено всі сім складових бачення, Java/Spring приклади dependencies, лише реальна потреба, рекомендаційний характер, заборона передчасних реалізації та roadmap/runtime |
-| 3. Architecture Discussion | той самий reference; [Brainstorm](../skills/brainstorming/SKILL.md) | Збережено погодження напряму до детального плану, modules, integrations, persistence, dependencies, technologies, protocols, infrastructure |
-| 4. Project Creation Is User-Controlled | [init reference](../ai-rules/references/project-initialization.md#project-creation-is-user-controlled) | Дослівно: включно з Java 21/25, фактичним source of truth й забороною самовільного повернення конфігурації |
-| 5. Inspect Created Project | [init reference](../ai-rules/references/project-initialization.md#inspect-created-project) | Дослівно: build config, Java/Spring versions, dependencies, packages, configuration, Git, файли й повідомлення розбіжностей |
-| 6. Explicit Transition to Planning | [init reference](../ai-rules/references/project-initialization.md#перехід-до-планування-та-реалізації-foundation) | Явний scope і приклад дозволу збережені; вже наданий дозвіл не перепитується |
-| 7. Planning Starts With Project Foundation | той самий reference; [Writing Plans](../skills/writing-plans/SKILL.md#design-plan-і-progress) | Roadmap/runtime, technical decisions, повний список foundation, infrastructure/environments, відмежування business functionality збережені; виконання foundation відділене від planning |
-| Project Initialization Flow, Core Rule | [init reference](../ai-rules/references/project-initialization.md#послідовність-для-нового-програмного-проєкту) | Послідовність від контексту до business implementation явно відтворена з погодженням плану перед foundation |
-| Senior-Level Readable Code | [Project Conventions](../skills/project-init/references/project-conventions.md#11-readable-code) і [Java style](../skills/project-init/references/project-conventions.md#agreed-java-code-style) | Усі принципи збережені: людський послідовний код, назви, методи без дроблення, явний flow, приклади Playbook/проєкту, production Java без var, var лише в тестах, стиль змінених фрагментів без масового форматування |
-| Testing Policy | [Testing Policy](../ai-rules/testing-policy.md) | Дослівно: явний запит, критична логіка, мінімум перевірок, максимум 20 на весь проєкт, кожен набір параметрів окремо, заборони, наявне перевищення, пріоритет і перевірка якості без нових тестів |
-| Before Implementation | [implementation rules](../skills/executing-plans/references/implementation-rules.md#before-implementation) | Дослівно, усі сім пунктів |
-| Planning | [Writing Plans](../skills/writing-plans/SKILL.md) | Обидва іменовані документи, українська мова, approval до коду й після суттєвих змін збережені |
-| Roadmap | [Writing Plans](../skills/writing-plans/SKILL.md#design-plan-і-progress) | Мета, концепція, архітектура, етапи, напрямок і актуалізація при зміні концепції/важливого функціоналу збережені |
+| 3. Architecture Discussion | той самий reference; [Brainstorm (brainstorming/SKILL.md)](../skills/brainstorming/SKILL.md) | Збережено погодження напряму до детального плану, modules, integrations, persistence, dependencies, technologies, protocols, infrastructure |
+| 4. Project Creation Is User-Controlled | [init reference (inspect-project.md)](../skills/project-init/references/inspect-project.md) | Дослівно: включно з Java 21/25, фактичним source of truth й забороною самовільного повернення конфігурації |
+| 5. Inspect Created Project | [init reference (inspect-project.md)](../skills/project-init/references/inspect-project.md#inspect-created-project) | Дослівно: build config, Java/Spring versions, dependencies, packages, configuration, Git, файли й повідомлення розбіжностей |
+| 6. Explicit Transition to Planning | [init reference (inspect-project.md)](../skills/project-init/references/inspect-project.md) | Явний scope і приклад дозволу збережені; вже наданий дозвіл не перепитується |
+| 7. Planning Starts With Project Foundation | той самий reference; [Writing Plans (writing-plans/SKILL.md)](../skills/writing-plans/SKILL.md#design-plan-і-progress) | Roadmap/runtime, technical decisions, повний список foundation, infrastructure/environments, відмежування business functionality збережені; виконання foundation відділене від planning |
+| Project Initialization Flow, Core Rule | [init reference (inspect-project.md)](../skills/project-init/references/inspect-project.md) | Послідовність від контексту до business implementation явно відтворена з погодженням плану перед foundation |
+| Senior-Level Readable Code | [Project Conventions (project-conventions.md)](../skills/project-init/references/project-conventions.md#11-readable-code) і [Java style (project-conventions.md)](../skills/project-init/references/project-conventions.md#agreed-java-code-style) | Усі принципи збережені: людський послідовний код, назви, методи без дроблення, явний flow, приклади Playbook/проєкту, production Java без var, var лише в тестах, стиль змінених фрагментів без масового форматування |
+| Testing Policy | [Testing Policy (testing-policy.md)](../ai-rules/testing-policy.md) | Дослівно: явний запит, критична логіка, мінімум перевірок, максимум 20 на весь проєкт, кожен набір параметрів окремо, заборони, наявне перевищення, пріоритет і перевірка якості без нових тестів |
+| Before Implementation | [implementation rules (implementation-rules.md)](../skills/executing-plans/references/implementation-rules.md#before-implementation) | Дослівно, усі сім пунктів |
+| Planning | [Writing Plans (writing-plans/SKILL.md)](../skills/writing-plans/SKILL.md) | Обидва іменовані документи, українська мова, approval до коду й після суттєвих змін збережені |
+| Roadmap | [Writing Plans (writing-plans/SKILL.md)](../skills/writing-plans/SKILL.md#design-plan-і-progress) | Мета, концепція, архітектура, етапи, напрямок і актуалізація при зміні концепції/важливого функціоналу збережені |
 | Runtime | той самий Skill | Поточний етап, реалізоване, зміни/рішення, відхилення, критичні деталі, наступний крок та оновлення після суттєвих етапів збережені |
-| Planning Workflow | [Writing Plans](../skills/writing-plans/SKILL.md#робочий-цикл-документів) | Дев’ять дій збережено за змістом; наявні документи використовуються без дублювання для дрібних задач |
-| Implementation | [implementation rules](../skills/executing-plans/references/implementation-rules.md#implementation) | Дослівно, включно з мінімальними змінами, naming/packages, межами рефакторингу й журналами |
+| Planning Workflow | [Writing Plans (writing-plans/SKILL.md)](../skills/writing-plans/SKILL.md#робочий-цикл-документів) | Дев’ять дій збережено за змістом; наявні документи використовуються без дублювання для дрібних задач |
+| Implementation | [implementation rules (implementation-rules.md)](../skills/executing-plans/references/implementation-rules.md#implementation) | Дослівно, включно з мінімальними змінами, naming/packages, межами рефакторингу й журналами |
 | Git Rules | `b3ccfe7:ai-rules/general.md`, Git Rules | Дослівно, commit/push залишаються користувачу |
 | Local AI Files | `b3ccfe7:ai-rules/general.md`, Local AI Files | Дослівно: приклади, .gitignore, виключення для продуктової AI-функціональності |
-| Configuration and Environment | [Infrastructure](../skills/project-init/references/infrastructure.md#configuration-values-and-typed-access) | Заборони hardcode, API keys у Java, System.getenv і розкиданих @Value, environment/configuration та typed access збережені |
-| Docker environment | [Environments](../skills/project-init/references/environments.md) | Обидві директорії, compose, .env і .env.example; реальні значення локально/у .gitignore, приклади без секретів у Git збережені |
-| Bootstrap Properties | [Infrastructure](../skills/project-init/references/infrastructure.md#typed-configuration-properties) | bootstrap/properties, невеликі ConfigurationProperties, приклад BrowserProperties з чотирма полями, typed доступ і заборона глобального properties object збережені |
-| Unexpected Situations | [implementation rules](../skills/executing-plans/references/implementation-rules.md#unexpected-situations) | Дослівно: п’ять тригерів і шість кроків, включно зі зупинкою й рішенням користувача |
-| Code Reuse | [implementation rules](../skills/executing-plans/references/implementation-rules.md#code-reuse) | Дослівно, усі п’ять пунктів |
+| Configuration and Environment | [Infrastructure (infrastructure.md)](../skills/project-init/references/infrastructure.md#configuration-values-and-typed-access) | Заборони hardcode, API keys у Java, System.getenv і розкиданих @Value, environment/configuration та typed access збережені |
+| Docker environment | [Environments (environments.md)](../skills/project-init/references/environments.md) | Обидві директорії, compose, .env і .env.example; реальні значення локально/у .gitignore, приклади без секретів у Git збережені |
+| Bootstrap Properties | [Infrastructure (infrastructure.md)](../skills/project-init/references/infrastructure.md#typed-configuration-properties) | bootstrap/properties, невеликі ConfigurationProperties, приклад BrowserProperties з чотирма полями, typed доступ і заборона глобального properties object збережені |
+| Unexpected Situations | [implementation rules (implementation-rules.md)](../skills/executing-plans/references/implementation-rules.md#unexpected-situations) | Дослівно: п’ять тригерів і шість кроків, включно зі зупинкою й рішенням користувача |
+| Code Reuse | [implementation rules (implementation-rules.md)](../skills/executing-plans/references/implementation-rules.md#code-reuse) | Дослівно, усі п’ять пунктів |
 | General Rules | `b3ccfe7:ai-rules/general.md`, General Rules, Git/Local AI Files; Infrastructure | Усі вісім пунктів збережені, технічні деталі мають прямі посилання |
 
 ## Відмінності від оригіналу, які не приховуємо
@@ -100,7 +100,7 @@ drafts не оголошено погодженими. Commit/push не вико
 agent-specific MD-файлів і використовувати AGENTS.md. Local AI Files
 тепер відрізняється від початкового тексту цим погодженим перейменуванням;
 позначка «дослівно» в таблиці описує стан первинної перевірки.
-Додано [правила підключення](../ai-rules/references/project-agent-instructions.md):
+Додано [правила підключення (project-agent-instructions.md)](../ai-rules/project-agent-instructions.md):
 короткі межі й посилання в AGENTS.md, повні джерела збережені, стан у runtime.
 Файли інструкцій у продуктових репозиторіях цим проходом не змінювалися.
 
@@ -125,4 +125,4 @@ design; етапи, порядок, залежності й задачі — у 
 містить прив’язку до відповідної роботи. Оновлення обов’язкове після
 кожної задачі або зміни, до наступної роботи. Текст призначено іншому
 чату без доступу до розмови. Чинне джерело —
-[project-progress.md](../ai-rules/references/project-progress.md).
+[project-progress.md](../ai-rules/project-progress.md).

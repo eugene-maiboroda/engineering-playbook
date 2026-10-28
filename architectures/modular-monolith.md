@@ -152,7 +152,7 @@ Midwives, `exception`/`exceptions`, `usecase`/`usecases` зберігаютьс�
 
 Domain, persistence entity/projection, SDK DTO та cache representation
 зберігають свої ролі й не стають API DTO через однакові поля.
-Деталі та приклади — [API boundaries, DTO, integrations та cache](modular-monolith-integrations-dto-cache.md).
+Деталі та приклади — [API boundaries, DTO, integrations та cache (modular-monolith-integrations-dto-cache.md)](modular-monolith-integrations-dto-cache.md).
 
 ## Сервіс і use cases
 
@@ -1455,7 +1455,7 @@ Recipe Service
 # Тестування
 
 За замовчуванням нові тести не пишуться. Застосовується
-[Testing Policy](../ai-rules/general.md#testing-policy): тільки за явним
+[Testing Policy (general.md)](../ai-rules/testing-policy.md): тільки за явним
 запитом користувача, тільки для найкритичнішої бізнес-логіки та не більше
 20 автоматизованих тестових сценаріїв загалом на проєкт, включно з наявними.
 

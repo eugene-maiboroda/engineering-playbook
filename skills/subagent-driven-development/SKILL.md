@@ -35,7 +35,7 @@ review усієї роботи. Цей режим запускається ли�
 [implementation-rules.md](../executing-plans/references/implementation-rules.md):
 поточна структура й архітектура, схожі реалізації, мінімальні зміни,
 reuse, актуалізація progress та зупинка при непередбачених проблемах.
-Повна [Testing Policy](../../ai-rules/testing-policy.md) застосовується
+Повна [Testing Policy (testing-policy.md)](../../ai-rules/testing-policy.md) застосовується
 до планування перевірок; новий reference не є окремим Skill.
 
 ## Відкладені інтеграції
@@ -48,7 +48,7 @@ reuse, актуалізація progress та зупинка при непере
 Задачі мають окремі результати й контракти. Тісно пов’язану роботу об’єднай
 у змістовну задачу або запропонуй її перебудову, не вигадуй незалежності.
 За відсутності tool не імітуй dispatch: запропонуй
-[`engineering-playbook:executing-plans`](../executing-plans/SKILL.md) й погодь зміну режиму.
+[`engineering-playbook:executing-plans` (executing-plans/SKILL.md)](../executing-plans/SKILL.md) й погодь зміну режиму.
 
 Implementers працюють послідовно. Не запускай кількох агентів, які
 паралельно пишуть у спільні файли. Наявність кількох доступних слотів не
@@ -59,8 +59,8 @@ Implementers працюють послідовно. Не запускай кіл
 ## Матеріали й підготовка
 
 Перед першою задачею прочитай спільні правила
-[журналу/preflight/resuming](../executing-plans/references/execution-records.md)
-та [snapshot review](../executing-plans/references/review-snapshots.md).
+[журналу/preflight/resuming (execution-records.md)](../executing-plans/references/execution-records.md)
+та [snapshot review (review-snapshots.md)](../executing-plans/references/review-snapshots.md).
 Це явна локальна залежність від пакета executing-plans, не зовнішній tool.
 
 Перевір plan/spec, дозволений root і baseline, користувацькі dirty зміни,

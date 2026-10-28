@@ -37,6 +37,6 @@ Design має описувати межу між поточною та очік�
 Передай дизайн у Writing Plans після approval в межах дозволеного scope.
 Чинний план не переписуй у Brainstorm: запропонуй, куди входить зміна.
 Якщо лишилися документи старої схеми, використовуй
-[правила переходу](../../../ai-rules/references/project-agent-instructions.md#перехід-наявного-проєкту).
+[правила переходу (project-agent-instructions.md)](../../../ai-rules/project-agent-instructions.md#перехід-наявного-проєкту).
 Визначення перевірок не є дозволом автоматично генерувати нові тести;
-застосовуй повну [Testing Policy](../../../ai-rules/testing-policy.md).
+застосовуй повну [Testing Policy (testing-policy.md)](../../../ai-rules/testing-policy.md).

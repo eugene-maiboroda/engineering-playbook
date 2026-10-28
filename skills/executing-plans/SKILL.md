@@ -37,7 +37,7 @@ metadata:
 [implementation-rules.md](../executing-plans/references/implementation-rules.md):
 поточна структура й архітектура, схожі реалізації, мінімальні зміни,
 reuse, актуалізація progress та зупинка при непередбачених проблемах.
-Повна [Testing Policy](../../ai-rules/testing-policy.md) застосовується
+Повна [Testing Policy (testing-policy.md)](../../ai-rules/testing-policy.md) застосовується
 до планування перевірок; новий reference не є окремим Skill.
 
 ## Відкладені інтеграції
@@ -54,13 +54,13 @@ reuse, актуалізація progress та зупинка при непере
 
 Довгий план потребує особливо уважного ведення журналу. Якщо потрібні
 незалежні перевірки кожної задачі, запропонуй окремий режим
-[`engineering-playbook:subagent-driven-development`](../subagent-driven-development/SKILL.md).
+[`engineering-playbook:subagent-driven-development` (subagent-driven-development/SKILL.md)](../subagent-driven-development/SKILL.md).
 Не перемикайся на нього автоматично.
 
 ## Спільні правила та матеріали
 
 Прочитай локальні інструкції проєкту та застосуй
-[спільні правила реалізації](references/implementation-rules.md).
+[спільні правила реалізації (implementation-rules.md)](references/implementation-rules.md).
 Специфікація визначає бажаний результат, план — порядок роботи, а дозволи
 користувача й середовища — межі дій. Якщо вони суперечать одне одному,
 не обирай суттєве рішення мовчки. Погоджені дрібні деталі можна визначити
@@ -68,11 +68,11 @@ reuse, актуалізація progress та зупинка при непере
 
 Потрібні інструкції:
 
-- [Журнал, brief, відновлення та preflight](references/execution-records.md) —
+- [Журнал, brief, відновлення та preflight (execution-records.md)](references/execution-records.md) —
   прочитай перед виконанням або відновленням плану.
-- [Незмінні матеріали для review](references/review-snapshots.md) —
+- [Незмінні матеріали для review (review-snapshots.md)](references/review-snapshots.md) —
   прочитай перед підготовкою будь-якого review.
-- [Фінальна перевірка](references/final-review.md) — після завершення задач.
+- [Фінальна перевірка (final-review.md)](references/final-review.md) — після завершення задач.
 
 У пакеті немає scripts, прихованих команд або власного runner. Матеріали
 готуються звичайними дозволеними файловими/Git-інструментами. Опис дії не

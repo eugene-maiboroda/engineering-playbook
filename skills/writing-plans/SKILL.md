@@ -32,7 +32,7 @@ metadata:
 **Контекст:** спочатку прочитай погоджений дизайн або специфікацію,
 локальні інструкції та релевантний стан проєкту. Worktree не є обов’язковим
 для написання плану; ізоляцію виконання визначай окремо. У програмних
-проєктах прочитай локальні інструкції та [Testing Policy](../../ai-rules/testing-policy.md),
+проєктах прочитай локальні інструкції та [Testing Policy (testing-policy.md)](../../ai-rules/testing-policy.md),
 Git Rules, Local AI Files та чинні configuration conventions.
 Нові тести не додавай без явного запиту; обов’язкові TDD та автоматичні
 commit/push не є частиною цього процесу. Планування не надає нових дозволів
@@ -73,16 +73,16 @@ commit/push не є частиною цього процесу. Плануван
 Progress — один спільний журнал усього проєкту, за замовчуванням
 `docs/progress.md`, а не документ цього плану. У кожному плані вкажи
 той самий чинний шлях і вимогу читати й оновлювати його за
-[правилами прогресу проєкту](../../ai-rules/references/project-progress.md).
+[правилами прогресу проєкту (project-progress.md)](../../ai-rules/project-progress.md).
 Зафіксуй створення/оновлення плану та стан погодження як фактичну подію,
 не видаючи заплановані задачі за виконані. Не скидай історію при новій фічі.
-Технічні записи виконання — [execution-records](../executing-plans/references/execution-records.md).
+Технічні записи виконання — [execution-records (execution-records.md)](../executing-plans/references/execution-records.md).
 Окремий runtime не створюється. Документи ведуться українською й
 залишаються локальними; додай їх до .gitignore.
 
 Writing Plans не замінюється Project-init. Якщо для плану потрібна
 ініціалізація, явно врахуй обраний користувачем сценарій
-[`engineering-playbook:project-init`](../project-init/SKILL.md): створення
+[`engineering-playbook:project-init` (project-init/SKILL.md)](../project-init/SKILL.md): створення
 нового skeleton агентом (`create`) або перевірка готового проєкту
 (`inspect`). Не починай її лише через запуск Planning. Невідомий
 фактичний стан познач як прогалину; наявні файли не регенеруй мовчки.
@@ -107,7 +107,7 @@ basic package structure
 ```
 
 Набір залежить від проєкту й правил
-[infrastructure](../project-init/references/infrastructure.md) та [environments](../project-init/references/environments.md).
+[infrastructure (infrastructure.md)](../project-init/references/infrastructure.md) та [environments (environments.md)](../project-init/references/environments.md).
 Це каркас, а не бізнес-функціональність. Бізнес-модулі й use cases
 виконуються за погодженими етапами плану.
 
@@ -123,7 +123,7 @@ basic package structure
 суттєві рішення. Запис у progress не є погодженням.
 
 Для наявного проєкту з документами старої схеми застосуй
-[правила переходу](../../ai-rules/references/project-agent-instructions.md#перехід-наявного-проєкту).
+[правила переходу (project-agent-instructions.md)](../../ai-rules/project-agent-instructions.md#перехід-наявного-проєкту).
 Не втрачай унікальні рішення й не видаляй старі файли автоматично.
 
 ## Перевірка меж роботи
@@ -366,9 +366,9 @@ checks або ручну перевірку згідно з чинною пол�
 **Після погодження плану та вибору режиму:**
 
 - Через субагентів — відповідний допоміжний Skill:
-  [`engineering-playbook:subagent-driven-development`](../subagent-driven-development/SKILL.md).
+  [`engineering-playbook:subagent-driven-development` (subagent-driven-development/SKILL.md)](../subagent-driven-development/SKILL.md).
 - Основним агентом — відповідний допоміжний Skill:
-  [`engineering-playbook:executing-plans`](../executing-plans/SKILL.md).
+  [`engineering-playbook:executing-plans` (executing-plans/SKILL.md)](../executing-plans/SKILL.md).
 
 Зберігай ці execution Skills, не замінюй їх Project-init. Обидва локальні execution-пакети підготовлені як draft і проходять
 користувацький review; посилання не означає погодження їхніх політик

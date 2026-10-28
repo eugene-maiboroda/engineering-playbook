@@ -19,7 +19,7 @@
 Engineering Playbook використовується як локальна база документів, без
 plugin і marketplace. Передай агенту абсолютний корінь цільового проєкту,
 абсолютний корінь Playbook і шлях початкового Skill. Правила пошуку —
-[підключення через AGENTS.md](ai-rules/references/project-agent-instructions.md#розташування-playbook-і-пошук-документів).
+[підключення через AGENTS.md (project-agent-instructions.md)](ai-rules/project-agent-instructions.md#розташування-playbook-і-пошук-документів).
 
 Між Skills зберігаємо назву `engineering-playbook:назва` та обов’язкове
 файлове посилання на SKILL.md. Префікс — умовна назва в документах, а не

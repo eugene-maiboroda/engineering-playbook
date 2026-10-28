@@ -22,7 +22,7 @@
    суміжних документах. Зберігай ownership, isolation, configuration,
    integration і cache правила, які не залежать від naming пакетів.
 
-Джерела: [Modular Monolith](../architectures/modular-monolith.md),
-[DTO, integrations та cache](../architectures/modular-monolith-integrations-dto-cache.md),
-[Hexagonal Pipeline](../architectures/hexagonal-pipeline.md),
-[Package Responsibilities](../skills/project-init/references/project-conventions.md#4-package-responsibilities).
+Джерела: [Modular Monolith (modular-monolith.md)](../architectures/modular-monolith.md),
+[DTO, integrations та cache (modular-monolith-integrations-dto-cache.md)](../architectures/modular-monolith-integrations-dto-cache.md),
+[Hexagonal Pipeline (hexagonal-pipeline.md)](../architectures/hexagonal-pipeline.md),
+[Package Responsibilities (project-conventions.md)](../skills/project-init/references/project-conventions.md#4-package-responsibilities).
