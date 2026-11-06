@@ -86,9 +86,7 @@ public record ErrorResponse(
 
     public static ErrorResponse of(String code, String message) {
         ErrorDetailsResponse details = ErrorDetailsResponse.of(code, message);
-        return new ErrorResponse(
-                details
-        );
+        return new ErrorResponse(details);
     }
 }
 ```
@@ -112,19 +110,11 @@ public record ErrorDetailsResponse(
 ) {
 
     public static ErrorDetailsResponse of(String code, String message) {
-        return new ErrorDetailsResponse(
-                code,
-                message,
-                Map.of()
-        );
+        return new ErrorDetailsResponse(code, message, Map.of());
     }
 
     public static ErrorDetailsResponse validation(Map<String, String> errors) {
-        return new ErrorDetailsResponse(
-                "INVALID_REQUEST",
-                "Request validation failed",
-                Map.copyOf(errors)
-        );
+        return new ErrorDetailsResponse("INVALID_REQUEST", "Request validation failed", Map.copyOf(errors));
     }
 }
 ```
@@ -172,9 +162,7 @@ public class ApiExceptionHandler {
     ) {
         Map<String, String> validationErrors = collectValidationErrors(exception);
         ErrorDetailsResponse details = ErrorDetailsResponse.validation(validationErrors);
-        ErrorResponse response = new ErrorResponse(
-                details
-        );
+        ErrorResponse response = new ErrorResponse(details);
 
         return ResponseEntity.badRequest().body(response);
     }

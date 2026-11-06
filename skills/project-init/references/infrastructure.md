@@ -70,6 +70,102 @@ infrastructure/
 
 ---
 
+## OpenApiConfig
+
+У стандартному create завжди створюй
+`<packageName>/infrastructure/config/OpenApiConfig.java`, незалежно від
+`features.security`. Використовуй `@Configuration(proxyBeanMethods = false)`
+і bean `OpenAPI`.
+
+У шаблоні нижче заміни `com.example` на обчислений `packageName`, а
+`<projectName>` — на обчислене metadata-поле `name` за
+[input-contract.md](input-contract.md). За поточним стандартом `name`
+дорівнює `artifactId`, наприклад `familymenu-backend`; зберігай дефіси
+та регістр фактичного імені, не перетворюй його на display title.
+Підставляй ім’я під час генерації з коректним escaping Java string literal.
+Description і version залишай як у шаблоні.
+
+Базовий варіант, коли `features.security=false`:
+
+```java
+package com.example.infrastructure.config;
+
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration(proxyBeanMethods = false)
+public class OpenApiConfig {
+
+    @Bean
+    public OpenAPI openAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("<projectName>")
+                        .description("Local POC API. Business endpoints will be added in subsequent stages.")
+                        .version("POC"));
+    }
+}
+```
+
+Лише за `features.security=true` додай імпорти
+`io.swagger.v3.oas.models.Components` і
+`io.swagger.v3.oas.models.security.SecurityScheme`, а перед `.info(...)` —
+реєстрацію схеми:
+
+```java
+        return new OpenAPI()
+                .components(new Components().addSecuritySchemes("bearerAuth",
+                        new SecurityScheme()
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")))
+                .info(new Info()
+                        .title("<projectName>")
+                        .description("Local POC API. Business endpoints will be added in subsequent stages.")
+                        .version("POC"));
+```
+
+За `features.security=false` не додавай цей блок, його імпорти або
+`bearerAuth`. Реєстрація схеми описує OpenAPI metadata; сама по собі вона
+не реалізує JWT authentication і не змінює session security із
+[security.md](security.md). Не додавай JWT dependencies, token endpoints
+або глобальний `SecurityRequirement` лише через цей шаблон.
+
+## MapStructConfig
+
+Лише за `features.mapstruct=true` створюй
+`<packageName>/infrastructure/config/MapStructConfig.java` разом із
+бібліотекою, processor і Lombok binding за
+[maven-standard.md](maven-standard.md). Заміни `com.example` на обчислений
+`packageName`:
+
+```java
+package com.example.infrastructure.config;
+
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.MapperConfig;
+import org.mapstruct.ReportingPolicy;
+
+@MapperConfig(
+        componentModel = "spring",
+        unmappedTargetPolicy = ReportingPolicy.ERROR,
+        unmappedSourcePolicy = ReportingPolicy.IGNORE,
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR
+)
+public class MapStructConfig {
+}
+```
+
+Це спільна конфігурація MapStruct, не Spring `@Configuration` class.
+Для mapper-ів, які реально потрібні проєкту, використовуй
+`@Mapper(config = MapStructConfig.class)`. Не створюй порожні або
+демонстраційні mapper-и лише через увімкнену опцію.
+
+За `features.mapstruct=false` не створюй `MapStructConfig` і MapStruct
+mapper-и; використовуй ручний mapping за Maven-стандартом.
+
 ## Configuration Values and Typed Access
 
 Environment-specific значення та секрети не hardcode-яться у Java-коді:

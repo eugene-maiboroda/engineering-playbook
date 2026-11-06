@@ -1,4 +1,5 @@
 # Environment variables and secrets
+docs/progress.md
 .env
 .env.*
 !.env.example

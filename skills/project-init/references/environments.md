@@ -345,12 +345,23 @@ spring.jpa.hibernate.ddl-auto=validate
 server.port=8080
 server.host=localhost
 
-spring.datasource.url=jdbc:postgresql://localhost:${POSTGRES_PORT}/${POSTGRES_DB}
+spring.datasource.url=jdbc:postgresql://localhost:${POSTGRES_PORT}/sample_dev
 spring.datasource.username=${POSTGRES_USER}
 spring.datasource.password=${POSTGRES_PASSWORD}
 
 spring.jpa.hibernate.ddl-auto=validate
 ```
+
+`sample_dev` у шаблоні заміни під час генерації на конкретну назву локальної
+dev БД: використай той самий префікс назви проєкту, що й для production
+`POSTGRES_DB` у згенерованому environment, але заміни кінцевий `_prod` на
+`_dev`. Наприклад, для `POSTGRES_DB=familymenu_prod` запиши в dev properties
+`spring.datasource.url=jdbc:postgresql://localhost:${POSTGRES_PORT}/familymenu_dev`.
+Назву БД запиши literal, без `${POSTGRES_DB}`: значення цієї env-змінної
+може вказувати на prod. Порт залиш `${POSTGRES_PORT}`; username і password
+залиш env-посиланнями на credentials локальної dev БД. Це правило стосується
+локального dev без Docker dev; container dev URL вище залишається з
+`${POSTGRES_DB}` із власного dev environment.
 
 У цьому сценарії не використовуй `${API_PORT}`, `${API_HOST}` або
 `${POSTGRES_HOST}` у dev profile. POSTGRES_PORT — опублікований host port

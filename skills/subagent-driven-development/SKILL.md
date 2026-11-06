@@ -94,13 +94,16 @@ override без окремого дозволу, не обходь це. Змі�
 
 ### 1. Передай задачу виконавцю
 
-Підготуй exact brief та baseline snapshot. Використай
+Підготуй exact brief та baseline за спільним execution-records.md.
+Brief може посилатися на доступну зафіксовану версію плану й task ID;
+окремий файл не обов’язковий. Використай
 [implementer-prompt.md](implementer-prompt.md). Передай:
 
 1. Де задача розташована в загальному процесі.
-2. Шлях до brief як єдиного джерела exact значень і вимог.
+2. Посилання на brief як єдине джерело exact значень і вимог:
+   plan path, revision/hash і task ID або шлях до окремого brief.
 3. Релевантні контракти й погоджені рішення попередніх задач.
-4. Окремо дозволений каталог запису та baseline snapshot ID/path для читання;
+4. Окремо дозволений каталог запису та baseline ID і матеріали для читання;
    не направляй реалізацію в reviewed snapshot. Познач захищені користувацькі зміни.
 5. Report path, критерії готовності та permission boundaries.
 6. Абсолютний Playbook root і шлях до implementation-rules.md; доручи

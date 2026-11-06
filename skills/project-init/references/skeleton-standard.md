@@ -16,7 +16,10 @@
   локальний .env містить лише не секретні placeholders;
 - PostgreSQL production service, healthcheck і persistent volume;
 - AppProps, AppRunner зі Swagger URL, AppConfig із Clock;
-- Springdoc/OpenAPI; у shared/errorhandler рівно ApiExceptionHandler,
+- Springdoc/OpenAPI та обов’язковий infrastructure/config/OpenApiConfig.java
+  за [infrastructure.md](infrastructure.md#openapiconfig): title з metadata name,
+  схема bearerAuth лише за features.security=true;
+  у shared/errorhandler рівно ApiExceptionHandler,
   ErrorResponse та ErrorDetailsResponse за [error-handling.md](error-handling.md);
 - CORS за cors.md; значення FRONTEND_URL отримай від користувача або
   переданих параметрів, не підставляй довільний origin;
@@ -45,7 +48,9 @@ JSON або вже обрані в розмові, застосуй вибір �
   за [environments.md](environments.md). Не дублюй prod Compose у docker/.
   dev profile бере API_HOST/API_PORT з env, DB hostname — dev service DNS.
 - devEnvironment=false: залиш prod у docker/; dev profile — server.port=8080,
-  server.host=localhost, JDBC localhost:${POSTGRES_PORT}/${POSTGRES_DB}.
+  server.host=localhost, JDBC localhost:${POSTGRES_PORT}/<project>_dev:
+  назва БД записана literal із того самого префікса, що production
+  POSTGRES_DB, із заміною кінцевого _prod на _dev за environments.md.
   DB credentials і порт користувач передає локальному запуску сам;
   Окремі Docker dev Compose/dev DB не створюй і не запускай автоматично;
   обов’язкова production основа при цьому залишається.
@@ -54,7 +59,9 @@ JSON або вже обрані в розмові, застосуй вибір �
   security=false: не додавай starter, security classes, auth properties,
   admin env-поля або Spring Security-only dependencies у базові класи.
 - mapstruct=true: додай бібліотеку, processor і Lombok binding за Maven
-  стандартом; інакше не додавай їх або їхні properties.
+  стандартом та infrastructure/config/MapStructConfig.java за
+  [infrastructure.md](infrastructure.md#mapstructconfig);
+  інакше не додавай конфіг, бібліотеку, processors або їхні properties.
 
 Init виконуй лише за явним запитом незалежно від поточного етапу розмови.
 Натискання Brainstorm або сам його new-project сценарій не дає дозволу

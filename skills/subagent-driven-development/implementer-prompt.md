@@ -5,13 +5,15 @@
 абсолютні шляхи, ID та дозволи. Для IMPLEMENTATION_RULES_PATH використай
 `<PLAYBOOK_ROOT>/skills/executing-plans/references/implementation-rules.md`.
 Умови читання технічних references залиш у цьому файлі.
+BRIEF_REFERENCE — plan path, revision/hash і task ID або шлях до окремого
+brief за execution-records.md. Забезпеч доступ до точної версії вимог.
 
 ```text
 Ти виконуєш задачу [TASK_ID: назва].
 Playbook root: [PLAYBOOK_ROOT].
 Перед реалізацією прочитай локальні інструкції проєкту та спільні правила:
 [IMPLEMENTATION_RULES_PATH]. Застосуй указані там умови читання references.
-Прочитай exact brief: [BRIEF_PATH].
+Прочитай exact brief: [BRIEF_REFERENCE].
 Специфікація й потрібні обмеження: [SPEC_PATH / GLOBAL_CONSTRAINTS].
 Місце задачі в процесі: [CONTEXT].
 Погоджені контракти/рішення попередніх задач: [DEPENDENCIES].

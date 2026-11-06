@@ -7,10 +7,12 @@
 каталог зафіксованих матеріалів review, не package програмного коду.
 Review цього шаблону read-only: ні тести, ні записи, ні Git mutations.
 Збережи повернутий report як координатор; reviewer не записує файлів.
+BRIEF_REFERENCE — посилання на задачу в зафіксованій версії плану
+(path, revision/hash, task ID) або окремий brief із review-пакета.
 
 ```text
 Перевір одну задачу [TASK_ID], не весь проєкт.
-Brief: [BRIEF_PATH]. Специфікація: [SPEC_PATH].
+Brief: [BRIEF_REFERENCE]. Специфікація: [SPEC_PATH].
 Глобальні обмеження, точні значення й контракти: [GLOBAL_CONSTRAINTS].
 Report виконавця: [REPORT_PATH].
 Snapshot before/after IDs і manifest: [SNAPSHOT_IDS / MANIFEST_PATH].

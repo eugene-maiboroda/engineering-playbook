@@ -8,7 +8,8 @@ HEAD_ID — ID нового snapshot, не обов’язково Git commit. �
 
 ```text
 Перевір fix round [TASK_ID / ROUND], не виконуй новий повний аудит.
-Brief/spec: [BRIEF_PATH / SPEC_PATH].
+Brief: [BRIEF_REFERENCE: plan path, revision/hash і task ID або brief path].
+Специфікація: [SPEC_PATH].
 Попередній review report: [PREVIOUS_REVIEW_REPORT_PATH].
 Відкриті findings і причини FAIL / Needs fixes дослівно: [FINDINGS].
 Report із доданими fix evidence: [REPORT_PATH].

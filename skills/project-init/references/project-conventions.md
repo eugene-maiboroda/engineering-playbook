@@ -381,6 +381,12 @@ public class ProductService {
   Закривна `)` на окремому рядку. Анотацію залишай на рядку компонента,
   якщо він читабельний і вкладається в межу рядка; інакше перенось анотацію.
   Правило діє для DTO, entities, search records і вкладених records.
+  Оголошення компонентів `record Name(...)` завжди багаторядкове,
+  навіть якщо всі компоненти вміщаються в один рядок. Це правило
+  стосується саме оголошення record, а не викликів `new Name(...)`.
+  Методи всередині record та виклики у вкладених класах оформлюй за
+  загальними правилами довжини рядка нижче; вкладені records зберігають
+  описаний тут формат оголошення.
 
 ```java
 public enum ProjectStatus {
@@ -431,9 +437,16 @@ public record ProjectRequest(
 - Builder завжди багаторядковий, навіть якщо вміщається: початковий
   вираз окремо, кожен `.field(...)`/`.set(...)` з нового рядка,
   `.build()` також окремо.
-- Створення DTO, зокрема `new XxxRespond(...)`, завжди оформлюй
-  багаторядково: один аргумент на рядок, закривна дужка окремо,
-  навіть якщо весь виклик вміщається в один рядок.
+- Виклики методів і виклики конструкторів через `new`, включно зі створенням DTO/records
+  (`new XxxRespond(...)`, `new ErrorResponse(details)`), пиши в один
+  рядок, якщо весь вираз із відступом вкладається в right margin.
+  Кількість аргументів сама по собі не є підставою для переносу.
+  Перенось аргументи лише коли вираз не вміщається; не став короткий
+  аргумент або закривну дужку на окремий рядок механічно.
+  Це правило діє і під час Project Init, і під час implementation;
+  reference-шаблони також мають йому відповідати.
+  Багаторядкове оголошення компонентів record залишається обов’язковим
+  за розділом Enum and Record; не стискай його за правилом для викликів.
 - У ланцюжку `.orElse(...)` та `.orElseThrow(...)` починай з нового рядка
   перед крапкою, як у погодженому `ProjectService`. Коротку lambda з
   `new Exception(...)` залишай на цьому рядку, якщо вона вміщається.
@@ -457,11 +470,7 @@ ProjectSearch search = ProjectSearch.builder()
 ProjectEntity project = projectDao.findProjectById(projectId)
         .orElseThrow(() -> new ProjectNotFoundException(projectId));
 
-return new ProjectRespond(
-        project.id(),
-        project.name(),
-        availableActions(project, currentUser)
-);
+return new ProjectRespond(project.id(), project.name(), availableActions(project, currentUser));
 ```
 
 ### Readability Refactor Boundaries
