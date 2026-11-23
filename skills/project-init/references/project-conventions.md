@@ -849,6 +849,33 @@ return new SendMessageResult(
 
 ---
 
+## Колекції в records
+
+Record не створює захисних копій колекцій автоматично. Якщо список
+має бути незмінним, у compact constructor використовуй `List.copyOf`.
+Це захищає склад списку від змін через початкове посилання, але не
+робить його елементи незмінними.
+
+Перетворюй `null` на `List.of()` лише коли контракт прирівнює відсутній
+список до порожнього:
+
+```java
+public record AgentProps(
+
+        List<String> ips
+) {
+
+    public AgentProps {
+        ips = ips == null ? List.of() : List.copyOf(ips);
+    }
+}
+```
+
+`List` імпортується з `java.util.List`. Для обов’язкового списку не
+приховуй відсутність значення такою нормалізацією. `List.copyOf`
+відхиляє `null` усередині списку; узгоджуй цю поведінку з контрактом
+і валідацією вхідного DTO.
+
 # 19. Consistent Error Handling
 
 ## Rule

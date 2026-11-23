@@ -1,6 +1,6 @@
 # Web API Contracts
 
-Правила HTTP-відповідей на межі backend і frontend. Застосовуються незалежно
+Правила HTTP-контрактів на межі backend і frontend. Застосовуються незалежно
 від архітектури проєкту. DTO та enum належать фічі-власнику; контролер
 формує HTTP-контракт, а бізнес-правила залишаються в application/domain.
 Формат помилок описано окремо в [Error Handling (error-handling.md)](error-handling.md).
@@ -16,6 +16,44 @@
 Не дублюй DTO лише заради двох входів і не експортуй HTTP-specific DTO
 як міжфічевий контракт. Правила вибору та повне дерево:
 [Структура одного модуля (modular-monolith.md)](../../../architectures/modular-monolith.md#структура-одного-модуля).
+
+## JSON-формат часу
+
+Для часових полів JSON DTO явно задавай рядкову форму через
+`@JsonFormat(shape = JsonFormat.Shape.STRING)`:
+
+```java
+@JsonFormat(shape = JsonFormat.Shape.STRING) OffsetDateTime timestamp
+```
+
+`JsonFormat` імпортується з `com.fasterxml.jackson.annotation.JsonFormat`.
+Анотація визначає рядкову форму, але не конкретний шаблон чи часовий пояс.
+Тип часу обирай за правилами проєкту: приклад з `OffsetDateTime` не
+замінює загальне правило `Instant` або погоджений локальний контракт.
+
+## Валідація вхідних DTO
+
+Прості обмеження вхідних DTO задавай стандартними Bean Validation
+анотаціями замість окремих методів перевірки тієї самої умови.
+Обмеження елементів колекції розміщуй на її типі елемента:
+
+```java
+List<@NotNull @Pattern(regexp = IPV4_PATTERN, message = "agent.ips must contain IPv4 addresses") String> ips
+```
+
+`@Pattern` перевіряє кожний рядок, а не список загалом. Сам `@Pattern`
+допускає `null`; `@NotNull` на типі елемента потрібний, якщо елементи
+обов’язкові. Обов’язковість і розмір самого списку задавай окремо
+на компоненті DTO відповідно до контракту.
+
+Для обов’язкового вкладеного об’єкта використовуй `@Valid @NotNull`:
+`@NotNull` перевіряє його наявність, `@Valid` — запускає перевірку
+вкладених обмежень. Анотації імпортуються з `jakarta.validation.Valid`
+та `jakarta.validation.constraints`.
+
+Валідацію запускай на вхідній межі, наприклад через `@Valid` для
+request body контролера. Самі анотації на DTO не запускають перевірку
+під час звичайного виклику конструктора.
 
 ## Available Actions
 
