@@ -25,6 +25,9 @@
 - Дотримуйся існуючого naming та package structure.
 - Використовуй існуючі підходи проєкту, якщо вони не порушують
   архітектуру.
+- Не додавай deprecated API. Перевір статус для фактичної версії
+  залежності, повідом про знайдений застарілий API та застосуй правила
+  [Deprecated API (project-conventions.md)](../../project-init/references/project-conventions.md#deprecated-api).
 - Після кожної задачі або окремої зміни онови спільний progress проєкту
   перед наступною роботою за [правилами журналу (project-progress.md)](../../../ai-rules/project-progress.md),
   пиши для іншого чату без доступу до цієї розмови. Якщо зміни впливають на
